@@ -6,6 +6,15 @@
 #include <sstream> 
 #include <dirent.h>
 
+typedef
+struct point
+{
+    double x;
+    double y;
+    double z;
+}POINT;
+
+
 class Utility
 {
     public:
@@ -17,6 +26,9 @@ class Utility
 
     //fast version of split store result in tokens
     static void split(std::vector<std::string> &tokens, std:: string &s, char delim = ' ') ;
+
+    //even faster version process on char*
+    static void split(std::vector<std::string> &tokens,const char* s, char delim = ' ');
 
     //if isFile == True return all the files in current directory through file
     //otherwise return all sub-directories

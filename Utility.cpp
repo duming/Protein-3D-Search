@@ -14,6 +14,7 @@ Utility:: split(std::string &s, char delim)
 void 
 Utility:: split(std::vector<std::string> &tokens, std::string &s, char delim )
 {
+    tokens.resize(0);
     std::stringstream ss(s); 
     std::string item;
     while (getline(ss, item, delim)) 
@@ -23,6 +24,27 @@ Utility:: split(std::vector<std::string> &tokens, std::string &s, char delim )
         tokens.push_back(item);
     }
 }
+
+
+
+
+void
+Utility:: split(std::vector<std::string> &tokens, const char* s, char delim)
+{
+    tokens.resize(0);
+    do
+    {
+        if(' ' ==delim)
+            while( ' ' == *s)
+                s++;
+        const char*begin = s;
+        while(*s != delim && *s)
+            s++;
+        tokens.push_back(std::string(begin, s));
+    }while(0 != *s++);
+
+}
+
 
 
 bool 
