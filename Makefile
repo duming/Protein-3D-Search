@@ -5,7 +5,7 @@
 CXX := g++
 TITLE_NAME := CathIDX
 
-FLAGS := -g -w
+FLAGS := -g -w -pthread
 
 SRCS = $(wildcard *.cpp)
 #OBJS := $(patsubst %.cpp,%.o,$SRCS)
