@@ -76,41 +76,4 @@ Utility:: listFiles(std::string dir, std::vector<std::string> &files, bool isFil
 ///////////////////////////////////
 
 
-template<class T>
-const T& ReadWriteBuffer<T>:: startRead()
-{
-    full.P();
-    pthread_mutex_lock(&rw_mutex);
-    int ret = outptr;
-    outptr = nextPos(outptr);
-    return base[ret];
-}
 
-
-
-
-template<class T>
-void ReadWriteBuffer<T>:: endRead()
-{
-    pthread_mutex_unlock(&rw_mutex);
-    empty.V();
-}
-
-
-template<class T>
-T& ReadWriteBuffer<T>:: startWrite()
-{   
-    empty.P();
-    pthread_mutex_lock(&rw_mutex);
-    int ret = inptr;
-    inptr = nextPos(inptr);
-    return base[ret];
-    
-}
-
-template<class T>
-void ReadWriteBuffer<T>:: endWrite()
-{
-    pthread_mutex_unlock(&rw_mutex);
-    full.V();
-}

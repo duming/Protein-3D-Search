@@ -5,7 +5,9 @@
 #include <time.h>
 #include <unistd.h>
 using namespace std;
-
+///////////////////////////////////
+//        semaphore test
+//        ///////////////////
 pthread_mutex_t main_mutex;
 
 void *print_message_function( void *ptr )
@@ -99,6 +101,98 @@ int semaphoreTest()
     return 0;
 }
 
+
+
+/////////////////////////////////////////////
+//    read write buffer test
+//    ///////////////////////////////////
+void* producer(void* ptr)
+{
+    //sleep(1);
+    ReadWriteBuffer<int> * bptr = (ReadWriteBuffer<int>*) ptr;
+    pthread_t   tid;
+    tid = pthread_self();
+ 
+    for(int i=0; i<100;i++)
+    {
+        //start writing
+        pthread_mutex_lock(&main_mutex);
+        cout<<tid<<":attempt to write "<<endl;
+        pthread_mutex_unlock(&main_mutex);
+        int &tmp = bptr->startWrite();
+        tmp = i;
+        bptr->endWrite();
+        
+        pthread_mutex_lock(&main_mutex);
+        cout<<tid<<":write "<<i<<endl;
+        pthread_mutex_unlock(&main_mutex);
+ 
+    }
+    return NULL;
+}
+
+
+void* consumer(void* ptr)
+{
+    pthread_t   tid;
+    tid = pthread_self();
+    
+
+    ReadWriteBuffer<int>* bptr = (ReadWriteBuffer<int>*) ptr;
+    for(int i =0;i<100;i++)
+    {   
+        pthread_mutex_lock(&main_mutex);
+        cout<<tid<<":attempt to read "<<endl;
+        pthread_mutex_unlock(&main_mutex);
+
+        int tmp = bptr->startRead();
+        bptr->endRead();
+   
+        pthread_mutex_lock(&main_mutex);
+        cout<<tid<<":read "<<tmp<<endl;
+        pthread_mutex_unlock(&main_mutex);
+    }
+    return NULL;
+}
+
+
+void producer_consumer_test()
+{
+    pthread_mutex_init(&main_mutex,NULL);
+    ReadWriteBuffer<int> buffer(3);
+    int c_num = 2;
+    int p_num = 2;
+    pthread_t threadc[c_num];
+    pthread_t threadp[p_num];
+    int iret1,iret2;
+
+    for(int i = 0; i<c_num;i++)
+    {
+	    iret1 = pthread_create( &threadc[i], NULL, consumer, (void*) &buffer);
+	    if(iret1)
+	    {
+	        fprintf(stderr,"Error - pthread_create() return code: %d\n",iret1);
+	        exit(EXIT_FAILURE);
+	    }
+    }
+
+    for(int i=0; i<p_num;i++)
+    {
+	    iret2 = pthread_create( &threadp[i], NULL, producer, (void*) &buffer);
+	    if(iret2)
+	    {
+	        fprintf(stderr,"Error - pthread_create() return code: %d\n",iret2);
+	        exit(EXIT_FAILURE);
+	    }
+    }
+
+    for(int i=0;i<c_num;i++)
+        pthread_join(threadc[i],NULL);
+    for(int i=0;i<p_num;i++)
+        pthread_join(threadp[i],NULL);
+
+}
+
 int main()
 {
     string ss("123  333 44 55");
@@ -126,7 +220,10 @@ int main()
 */
    // ReadWriteBuffer<POINT> pbf(10);
 	
-    semaphoreTest();     
+    //semaphoreTest();     
+
+
+    producer_consumer_test();
     return 0;
 }
 

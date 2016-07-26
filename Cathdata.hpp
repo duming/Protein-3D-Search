@@ -7,6 +7,9 @@
 #define DESCRIPTOR_LENGTH 30
 #define BUFFLENGTH 4096
 #define LINELENGTH 128
+
+
+
 class Cathdomain
 {
     public:

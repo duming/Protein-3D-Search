@@ -16,7 +16,9 @@ struct point
     double z;
 }POINT;
 
-
+///////////////////////////////////////
+//      semaphore
+//      //////////////////////////////
 
 //due to mac OS doen't support <semaphore.h> well. I write one by myself.
 //TODO use boost to handle all the multithreading things.
@@ -61,6 +63,10 @@ private:
 };
 
 
+
+////////////////////////////////////////
+//      read write buffer
+//      //////////////////////////////////
 template<class T>
 class ReadWriteBuffer
 {
@@ -86,13 +92,43 @@ public:
         return (ptr+1)%size;
     }
 
-    //read buffer operation
-    const T& startRead();
-    void endRead();
+    //start to read the buffer
+    //wait for full semaphre
+    //use the mutex to create a critical area 
+    //after update the pointer, release the mutex
+    const T& startRead()
+    {
+        full.P();
+        pthread_mutex_lock(&rw_mutex);
+        int ret = outptr;
+        outptr = nextPos(outptr);
+        pthread_mutex_unlock(&rw_mutex);
+        return base[ret];
+    }
 
-    //write buffer operation
-    T& startWrite();
-    void endWrite();
+    void endRead()
+    {
+        empty.V();
+    }
+
+
+    //start to write 
+    T& startWrite()
+    {   
+        empty.P();
+        pthread_mutex_lock(&rw_mutex);
+        int ret = inptr;
+        inptr = nextPos(inptr);
+        pthread_mutex_unlock(&rw_mutex);
+        return base[ret];
+    
+    }
+
+    void endWrite()
+    {
+        full.V();
+    }
+
 
 private:
     T *base;
@@ -106,7 +142,9 @@ private:
 };
 
 
-
+///////////////////////////////////////////
+//      utility class
+//      ///////////////////////////////////////
 
 
 class Utility
