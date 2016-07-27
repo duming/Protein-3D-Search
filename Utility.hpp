@@ -75,15 +75,27 @@ public:
     {
         size = bufSize;
         //allocate memory
+        isAllocateMemory = true;
         base = new T[bufSize];
         //set input and output pointer
         inptr = 0;
         outptr = 0;
         
     }
-    ~ReadWriteBuffer()
+
+    ReadWriteBuffer(int bufSize, T* bufbase):full(0),empty(bufSize)
     {
-        delete [] base;
+        size = bufSize;
+        //don't allocate memory 
+        isAllocateMemory = false;
+        base = bufbase;
+        inptr = 0;
+        outptr = 0;
+    }
+
+    ~ReadWriteBuffer()
+    {   if(isAllocateMemory)
+            delete [] base;
     }
 
     //return the next position the inptr and outptr should be
@@ -136,6 +148,7 @@ private:
     int outptr;
 
     int size;
+    bool isAllocateMemory;
     Semaphore full;
     Semaphore empty;
     pthread_mutex_t rw_mutex;

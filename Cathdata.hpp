@@ -9,7 +9,6 @@
 #define LINELENGTH 128
 
 
-
 class Cathdomain
 {
     public:
