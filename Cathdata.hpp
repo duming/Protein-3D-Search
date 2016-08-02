@@ -8,6 +8,8 @@
 #define BUFFLENGTH 4096
 #define LINELENGTH 128
 
+#define DATAPATH "data/"
+#define DOMAINPATH "dompdb/"
 
 class Cathdomain
 {
@@ -21,7 +23,12 @@ class Cathdomain
 
         //read information from PDB file
         //store all C-alpha coordinates to variable coords
-        bool readPDB(std:: string fileName, std::vector<POINT> &coords);
+        bool readPDB( std:: string fileName, std::vector<POINT> &coords);
+
+        inline bool readPDB(std::vector<POINT> &coords)
+        {
+            return readPDB(dataPath + domainPath + domainName, coords);
+        }
 
         void printDomain();
 
@@ -54,8 +61,11 @@ class Cathdomain
         //the structure resolution (999.000 for NMR and 1000 for obsolete PDB entries)
         double resolution;
 
-        friend class CathData;
+        static std::string dataPath;
+        static std::string domainPath;
 
+
+        friend class CathData;
 };
 
 
@@ -76,6 +86,19 @@ class CathData
         void printData();
 
         void test();
+
+        Cathdomain& operator [](int idx)
+        {
+            return domains[idx];
+        }
+
+
+        void printDomains(int start, int end)
+        {
+            for(int i=start ; i<=end;i++)
+                domains[i].printDomain();
+        }
+
     private:
         static char*inputBuff;
 

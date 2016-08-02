@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include "CathData.hpp"
+#include "Protein_3D_Index.hpp"
+#include "GaussIntegral.hpp"
 #include <time.h>
 #include <unistd.h>
 using namespace std;
@@ -193,6 +195,32 @@ void producer_consumer_test()
 
 }
 
+
+//////////////////////////////////
+//test vector operations
+///////////////////////////
+
+void vectortest()
+{
+    POINT vct1 = {0,0,0};
+    POINT vct2 = {-1,2,3};
+    POINT result;
+
+    cout<<Utility::vectLen(vct1)<<endl;
+    cout<<Utility::vectDot(vct1,vct2)<<endl;
+    Utility::vectUnit(result,vct1);
+    cout<<result<<endl;
+
+    cout<<Utility::vectLen(result)<<endl;
+
+    Utility::vectSub(result,vct1,vct2);
+    cout<<result<<endl;
+    Utility::vectCross(result,vct1,vct2);
+    cout<<result<<endl;
+
+}
+
+
 int main()
 {
     string ss("123  333 44 55");
@@ -223,7 +251,18 @@ int main()
     //semaphoreTest();     
 
 
-    producer_consumer_test();
+   // producer_consumer_test();
+   
+    //Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+
+    //P3DIdx.BuildIndex();
+    
+
+    GaussIntegral gi(1000);
+    gi.test();
+    
+//    vectortest();
+
     return 0;
 }
 

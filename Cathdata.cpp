@@ -3,8 +3,11 @@
 #include <stdlib.h>
 
 using namespace std;
-string CathData::dataPath = "data/";
-string CathData::domainPath = "dompdb/";
+string CathData::dataPath = DATAPATH;
+string CathData::domainPath = DOMAINPATH;
+string Cathdomain::dataPath = DATAPATH;
+string Cathdomain::domainPath = DOMAINPATH;
+
 char* Cathdomain:: inputBuff = new char[BUFFLENGTH];
 char* CathData:: inputBuff = new char[BUFFLENGTH];
 
@@ -19,6 +22,8 @@ void Cathdomain:: printDomain()
     cout<<domainLength<<'\t';
     cout<<resolution<<endl;
 }
+
+
 
 
 bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)

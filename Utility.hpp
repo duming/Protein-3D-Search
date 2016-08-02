@@ -7,6 +7,9 @@
 #include <dirent.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include <stdexcept>
+#include <cmath>
+
 
 typedef
 struct point
@@ -15,6 +18,9 @@ struct point
     double y;
     double z;
 }POINT;
+
+std::ostream& operator <<(std::ostream& os, point & pt);
+
 
 ///////////////////////////////////////
 //      semaphore
@@ -178,6 +184,24 @@ class Utility
     //if isFile == True return all the files in current directory through file
     //otherwise return all sub-directories
     static bool listFiles(std::string directory, std::vector<std::string> & files, bool isFile = true);
+
+
+    //vector length
+    static double vectLen(POINT const &op);
+
+    //vector dot product
+    static double vectDot(POINT const &op1, POINT const &op2);
+
+    //vector unit, return v/|v|
+    static void vectUnit(POINT &result, POINT const &op);
+
+    //vector subtraction generate the vector that from op1 to op2
+    static void vectSub(POINT& result, POINT const &op1, POINT const &op2);
+
+    //vector cross product
+    static void vectCross(POINT& result, POINT const &op1, POINT const &op2);
+
+
 };
 
 

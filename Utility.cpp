@@ -1,5 +1,11 @@
 #include "Utility.hpp"
 
+std::ostream& operator <<(std::ostream& os, point & pt)
+{
+    os<<pt.x<<" "<<pt.y<<" "<<pt.z;
+    return os;
+}
+
 
 std::vector<std::string>
 Utility:: split(std::string &s, char delim)
@@ -72,8 +78,43 @@ Utility:: listFiles(std::string dir, std::vector<std::string> &files, bool isFil
 
 
 ////////////////////////////////////
-//    readwrite buffer
+//    vector operation
 ///////////////////////////////////
 
+
+double Utility::vectLen(POINT const &op)
+{
+   return sqrt(vectDot(op,op)); 
+}
+
+
+double Utility::vectDot(POINT const &op1, POINT const &op2)
+{
+    return  op1.x*op2.x + op1.y*op2.y + op1.z*op2.z;
+}
+
+void Utility::vectUnit(POINT &result, point const & op)
+{   
+    double len = vectLen(op);
+    result.x = op.x/len;
+    result.y = op.y/len;
+    result.z = op.z/len;
+}
+
+
+void Utility::vectSub(POINT &result, POINT const &op1, POINT const &op2)
+{
+    result.x = op2.x - op1.x;
+    result.y = op2.y - op1.y;
+    result.z = op2.z - op1.z;
+}
+
+
+void Utility::vectCross(POINT &result, POINT const &op1, POINT const &op2)
+{
+    result.x = op1.y * op2.z - op2.y * op1.z;
+    result.y = op1.z * op2.x - op2.z * op1.x;
+    result.z = op1.x * op2.y - op2.x * op1.y;
+}
 
 
