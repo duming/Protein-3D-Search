@@ -2,6 +2,8 @@
 #define CATHDATA_HPP
 #include "Utility.hpp"
 
+#include "GaussIntegral.hpp"
+
 //define the default length of how many hierarchical category will be used
 #define CATE_LENGTH_DEFAULT 9
 #define DESCRIPTOR_LENGTH 30
@@ -23,15 +25,18 @@ class Cathdomain
 
         //read information from PDB file
         //store all C-alpha coordinates to variable coords
-        bool readPDB( std:: string fileName, std::vector<POINT> &coords);
+        static bool readPDB( std:: string fileName, std::vector<POINT> &coords);
 
         inline bool readPDB(std::vector<POINT> &coords)
         {
             return readPDB(dataPath + domainPath + domainName, coords);
         }
 
-        void printDomain();
 
+    
+
+        void printDomain();
+        
     private:
 
         static char* inputBuff;
@@ -43,7 +48,7 @@ class Cathdomain
         //cath PDB file
         /////////////////////////
         //the coordinates of c-alpha atoms
-        std::vector<double[3]>* coords;
+        std::vector<POINT>* coords;
 
 
         //////////////////

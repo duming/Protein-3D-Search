@@ -231,12 +231,7 @@ int main()
     clock_t t1,t2;
     vector<string> files;
 
-   CathData cc("CathDomainList.v4.0.0.txt");
-
-   t1 = clock();
-   cc.readList();
-   t2 = clock();
-
+   
     cc.test();
 */
    //cout<<t2-t1<<endl;
@@ -262,6 +257,9 @@ int main()
     gi.test();
     
 //    vectortest();
+    
+
+
 
     return 0;
 }

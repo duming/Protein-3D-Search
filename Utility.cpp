@@ -118,3 +118,44 @@ void Utility::vectCross(POINT &result, POINT const &op1, POINT const &op2)
 }
 
 
+
+void Utility:: readGIs(std::string fileName, std::vector<std::vector<double> > &result)
+{
+    std::ifstream infile(fileName);
+    if(!infile.is_open())
+    {
+        std::cout<<"error opening:"<<fileName<<std::endl;
+        return;
+    }
+    
+    std::vector<double> tmpvct;
+    tmpvct.resize(29);
+    std::string tmpstr;
+   
+    double foo;
+
+    while(true)
+    {
+        if(!(infile>>tmpstr))
+            break;
+        if(!(infile>>tmpstr))
+            break;
+        if(!(infile>>tmpstr))
+            break;
+        if(!(infile>>tmpstr))
+            break;
+ 
+
+   
+        int i;
+        for(i=0;i<29;i++)
+            if(!(infile>>tmpvct[i]))
+                break;
+
+        if(i==29)
+            result.push_back(tmpvct);
+        else
+            break;
+    }
+
+}

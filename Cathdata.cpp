@@ -12,8 +12,6 @@ char* Cathdomain:: inputBuff = new char[BUFFLENGTH];
 char* CathData:: inputBuff = new char[BUFFLENGTH];
 
 
-
-
 void Cathdomain:: printDomain()
 {
     cout<<domainName<<'\t';
@@ -32,7 +30,7 @@ bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)
     ifstream infile(fileName);
     if(!infile.is_open())
     {
-        cout<<"error opening file: "<<domainName<<endl;
+        cout<<"error opening file: "<<fileName<<endl;
         return false;
     }
     //setbuffer
@@ -114,12 +112,30 @@ void CathData::printData()
 
 
 
+
 void CathData:: test()
 {
+    /*
     string fileName = dataPath + domainPath + domains[0].domainName;
     cout<<fileName<<endl;
     vector<POINT> temp;
     domains[0].readPDB(fileName, temp);
     for(int i=0; i< temp.size(); i++)
         cout<<i<<':'<<temp[i].x<<'\t'<<temp[i].y<<'\t'<<temp[i].z<<endl;
+    */
+
+    std::vector<POINT> tempPoints[100];
+    double dscrpt[29];
+    GaussIntegral gi(1000);
+    for(int i=0;i<domain_num;i++)
+    {
+        domains[i].readPDB(tempPoints[i]);
+        gi.setProtein(&tempPoints[i]);
+        gi.GaussAll(dscrpt);
+        domains[i].printDomain();
+        for(int i=0; i < DESCRIPTOR_LENGTH; i++)
+            cout<<dscrpt[i]<<' ';
+        cout<<endl<<"################################"<<endl;
+    }
+
 }

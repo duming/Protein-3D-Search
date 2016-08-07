@@ -9,7 +9,8 @@
 #include <pthread.h>
 #include <stdexcept>
 #include <cmath>
-
+#include <fstream>
+#include <sstream>
 
 typedef
 struct point
@@ -200,7 +201,11 @@ class Utility
 
     //vector cross product
     static void vectCross(POINT& result, POINT const &op1, POINT const &op2);
+    
+    
 
+    //read gauss integral reasult from the original GI.c program
+    static void readGIs(std::string fileName, std::vector<std::vector<double> > &result);
 
 };
 
