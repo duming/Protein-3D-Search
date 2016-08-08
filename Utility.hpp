@@ -204,8 +204,16 @@ class Utility
     
     
 
+    // significant digits
+    static double round_to_digits(double value, int digits);
+        
+
+
     //read gauss integral reasult from the original GI.c program
-    static void readGIs(std::string fileName, std::vector<std::vector<double> > &result);
+    static void readGIs(std::string fileName, std::vector<std::vector<double> > &result, bool isTrans = true);
+
+
+
 
 };
 

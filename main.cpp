@@ -253,13 +253,18 @@ int main()
     //P3DIdx.BuildIndex();
     
 
-    GaussIntegral gi(1000);
+    GaussIntegral gi(1000,true);
     gi.test();
     
+
+
+
 //    vectortest();
     
 
 
+//    CathData cd("CathDomainList.v4.0.0.txt");
+//    cd.test();
 
     return 0;
 }

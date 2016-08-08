@@ -69,16 +69,23 @@ class GaussIntegral
 
 
     public:
-    GaussIntegral(int maxlen):unitvector(maxlen),omega(maxlen)
+    GaussIntegral(int maxlen, bool isTrans = true):unitvector(maxlen),omega(maxlen)
                               ,absomega(maxlen),partsum(maxlen)
                               ,abspartsum(maxlen)
     {
         maxLen = maxlen; 
         currentProtein = NULL;
+        CylinderTransform = isTrans;
     }
 
     ~GaussIntegral()
     {
+    }
+
+
+    void setTransform(bool isTrans)
+    {
+        CylinderTransform = isTrans;
     }
 
 
@@ -198,6 +205,29 @@ class GaussIntegral
     int maxLen; 
     //the threshold that is considered as zero 
     static double Epsilon;
+	
+    
+    /*The Cylindertransform is normalized such 
+	that chain length and each structural measure 
+	has derivation one on a set of representatives 
+	of the homology (H) classes of CATH 2.4. 
+	
+	Under this transform the Scaled Gauss Metric, 
+	SGM,  introduced in
+	
+	P. R{\o}gen & B. Fain, Automatic classification 
+	of protein structure by using Gauss integrals, 
+	PNAS, 100(1), 119-124, 2003.
+	
+	is given by the usual scalar product in R^30 of the 
+	last 30 columns of each output line.
+	
+	
+	If Cylindertransform is 0, GI writes the raw Gauss
+	integrals as output.
+	*/
+    bool CylinderTransform;
+
 };
 
 #endif

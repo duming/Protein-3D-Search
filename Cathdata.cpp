@@ -1,6 +1,8 @@
 #include "Cathdata.hpp"
 #include <fstream>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 string CathData::dataPath = DATAPATH;
@@ -38,17 +40,23 @@ bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)
 
     //read the file
     char line[LINELENGTH];
-    vector<string> tokens;
+    ///vector<string> tokens;
+    char lastChain[5] = "none", newChain[5], name[5], atom[3]; 
+    int resSeq, lastResSeq = -1;
     POINT tempP;
     while(infile.getline(line, LINELENGTH))
     {
-        Utility::split(tokens, line);
-        if(tokens[0] != "ATOM" || tokens[2] != "CA")
-            continue;
+        //Utility::split(tokens, line);
+        sscanf(line,"%4c",name);
+        sscanf(line+22,"%4i",&resSeq);
         
-        tempP.x = atof(tokens[6].c_str());
-        tempP.y = atof(tokens[7].c_str());
-        tempP.z = atof(tokens[8].c_str());
+        if( strcmp(name, "ATOM") || line[13]!= 'C' || line[14] != 'A'||resSeq == lastResSeq)
+            continue;
+      
+       
+        lastResSeq = resSeq;
+
+        sscanf(line+30,"%lf %lf %lf",&tempP.x,&tempP.y,&tempP.z);
         coords.push_back(tempP);
     }
 
@@ -115,27 +123,17 @@ void CathData::printData()
 
 void CathData:: test()
 {
-    /*
+    readList();
     string fileName = dataPath + domainPath + domains[0].domainName;
     cout<<fileName<<endl;
     vector<POINT> temp;
     domains[0].readPDB(fileName, temp);
-    for(int i=0; i< temp.size(); i++)
-        cout<<i<<':'<<temp[i].x<<'\t'<<temp[i].y<<'\t'<<temp[i].z<<endl;
-    */
+    
 
-    std::vector<POINT> tempPoints[100];
-    double dscrpt[29];
-    GaussIntegral gi(1000);
-    for(int i=0;i<domain_num;i++)
-    {
-        domains[i].readPDB(tempPoints[i]);
-        gi.setProtein(&tempPoints[i]);
-        gi.GaussAll(dscrpt);
-        domains[i].printDomain();
-        for(int i=0; i < DESCRIPTOR_LENGTH; i++)
-            cout<<dscrpt[i]<<' ';
-        cout<<endl<<"################################"<<endl;
-    }
+    string filename = "data/UnitTestpdb/1a0hA02";
+    Cathdomain::readPDB(filename, temp);
+
+    for(int i=0; i< temp.size(); i++)
+        cout<<i<<':'<<temp[i].x<<"\t\t"<<temp[i].y<<"\t\t"<<temp[i].z<<endl;
 
 }

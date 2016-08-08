@@ -38,7 +38,7 @@ void GaussIntegral::test()
     sa(99,99) = 100;
     cout<<sa(99,99)<<endl;
     */
-    string path = "data/UnitTestpdb/";
+    string path = "data/testpdb/";
     vector<string> files;
     Utility::listFiles(path,files);
 
@@ -52,11 +52,25 @@ void GaussIntegral::test()
         crdPtr[i].resize(1000);
     }
 
+    string GIfile;
+     int ds_len;
+    if(CylinderTransform)
+    {
+        ds_len = 30;
+        GIfile = "data/GI30out.txt";
+    }
+    else
+    {
+        GIfile = "data/GI29out.txt";
+        ds_len = 29;
+    }
 
-    Utility::readGIs("data/GIout.txt", GIresult);
 
     
-    double dscrpt[files.size()][29]; 
+    Utility::readGIs(GIfile, GIresult,CylinderTransform);
+    cout<<"GIresults:"<<GIresult.size()<<endl;
+
+    double dscrpt[files.size()][ds_len]; 
     
     clock_t t1,t2;
 
@@ -72,18 +86,25 @@ void GaussIntegral::test()
     t2 = clock();
     cout<<t2 -t1<<endl;
 
-    for(int i; i < GIresult.size(); i++)
+    for(int i=0; i < GIresult.size(); i++)
     {
-        for(int j = 0; j < 29 ;j++)
+        for(int j = 0; j < ds_len ;j++)
         {
-            cout<<j<<"\t:\t"<<setw(20)<<GIresult[i][j]<<"\t"<<setw(10)<<dscrpt[i][j]<<"\t\t";
+            double error,erat;
+            error = Utility::round_to_digits(dscrpt[i][j],4) - GIresult[i][j];
+            erat = abs(error)/(min(abs(dscrpt[i][j]),abs(GIresult[i][j]))); 
+            if(error > 0.005 || erat > 0.001)
+            {
+                cout<<files[i]<<":";
 
-            cout<<dscrpt[i][j] - GIresult[i][j]<<endl;
+                cout<<j<<"\t:\t"<<setw(20)<<GIresult[i][j]<<"\t"<<setw(10)<<dscrpt[i][j]<<"\t\t";
+
+                cout<<error<<'\t'<<erat<<endl;
+            }
         }
 
         cout<<endl;
     }
-    
 
 }
 
@@ -340,7 +361,7 @@ double GaussIntegral::int13_24_56(void)
     int a, b;
     double temp1, temp2;
     temp1=0;
-    for(a=4; a < proteinLen-3;a++)
+    for(a=3; a < proteinLen-4;a++)
     {
         temp2=0;
         for(b=1; b < a-1; b++)
@@ -361,9 +382,9 @@ double GaussIntegral::int13_25_46(void)
         for(b = a+2; b < proteinLen-3; b++)
         {
             temp2=0;
-            for(c=b+1; c < proteinLen-1; c++)
+            for(c=b+1; c < proteinLen-2; c++)
                 temp2 = temp2 + omega(a,c)*mixedsum(b,b,c+1,proteinLen-2);
-            temp1 = temp1 + temp2*mixedsum(1,a-1,a+1,b-1);
+            temp1 = temp1 + temp2*mixedsum(0,a-1,a+1,b-1);
         }
     }
     return temp1/(M_PI*M_PI*M_PI*8);
@@ -412,13 +433,13 @@ double GaussIntegral::int14_25_36(void)
     int a, b, c;
     double temp1, temp2;
     temp1=0;
-    for(a=2; a < proteinLen-5; a++)
+    for(a=1; a < proteinLen-5; a++)
     {
         for(b=a+3; b < proteinLen-2; b++)
         {
             temp2=0;
             for(c=a+1; c < b-1; c++)
-                temp2 = temp2 + mixedsum(1,a-1,c+1,b-1)*mixedsum(c,c,b+1,proteinLen-2);
+                temp2 = temp2 + mixedsum(0,a-1,c+1,b-1)*mixedsum(c,c,b+1,proteinLen-2);
             temp1 = temp1 + temp2*omega(a,b);
         }
     }
@@ -496,7 +517,7 @@ double GaussIntegral::int15_26_34(void)
         {
             temp2 = 0;
             for(c = a+4; c < b; c++)
-                temp2 = temp2 + partsum(a+1,c-1)*mixedsum(1,a-1,c,c);
+                temp2 = temp2 + partsum(a+1,c-1)*mixedsum(0,a-1,c,c);
             temp1 = temp1 + temp2*omega(a,b);
         }
     }
@@ -510,7 +531,7 @@ double GaussIntegral::int16_23_45(void)
     int a, b, c;
     double temp1, temp2;
     temp1=0;
-    for(a=1; a < proteinLen-8; a++)
+    for(a=0; a < proteinLen-8; a++)
     {
         for(b=a+7; b < proteinLen -1; b++)
         {
@@ -549,7 +570,7 @@ double GaussIntegral::int16_25_34(void)
     int a, b;
     double temp1;
     temp1=0;
-    for(a=2; a < proteinLen-6; a++)
+    for(a=1; a < proteinLen-6; a++)
         for(b = a+4; b < proteinLen-2; b++)
             temp1 = temp1 + mixedsum(0,a-1,b+1,proteinLen-2)*omega(a,b)*partsum(a+1,b-1);
     return temp1/(M_PI*M_PI*M_PI*8);
@@ -560,11 +581,11 @@ double GaussIntegral::int16_25_34(void)
 
 void GaussIntegral::GaussAll(double* gptr)
 {
-/*
+
     cout<<"protein length:"<<proteinLen<<endl;
     cout<<"###################"<<endl;
 
-
+/*
     for(int i=0; i< proteinLen; i++)
         cout<<(*currentProtein)[i]<<endl;
 
@@ -573,53 +594,86 @@ void GaussIntegral::GaussAll(double* gptr)
     createUnitVector();
    
 
-  //  unitvector.printArry();
+//    unitvector.printArry();
     
     createomega();
 //    omega.printArry();
 //      absomega.printArry();
     createpartsum();
 
-    //partsum.printArry();    
+//    partsum.printArry();    
 
 //    abspartsum.printArry();
 
-    
-    gptr[0] = int12(0);
-    gptr[1] = int12(1);
+    int offset;
+    if(CylinderTransform)
+    {
+        gptr[0] = proteinLen;
+        offset = 1;
+    }
+    else
+        offset = 0;
+
+    //"raw Guass Integral    
+    gptr[offset+0] = int12(0);
+    gptr[offset+1] = int12(1);
     //second order
-    gptr[2] = int12_34(0, 0);
-    gptr[3] = int12_34(1, 0);
-    gptr[4] = int12_34(0, 1);
-    gptr[5] = int12_34(1, 1);
-    gptr[6] = int13_24(0, 0);
-    gptr[7] = int13_24(1, 0);
-    gptr[8] = int13_24(0, 1);
-    gptr[9] = int13_24(1, 1);
-    gptr[10] = int14_23(0, 0);
-    gptr[11] = int14_23(1, 0);
-    gptr[12] = int14_23(0, 1);
-    gptr[13] = int14_23(1, 1);
+    gptr[offset+2] = int12_34(0, 0);
+    gptr[offset+3] = int12_34(1, 0);
+    gptr[offset+4] = int12_34(0, 1);
+    gptr[offset+5] = int12_34(1, 1);
+    gptr[offset+6] = int13_24(0, 0);
+    gptr[offset+7] = int13_24(1, 0);
+    gptr[offset+8] = int13_24(0, 1);
+    gptr[offset+9] = int13_24(1, 1);
+    gptr[offset+10] = int14_23(0, 0);
+    gptr[offset+11] = int14_23(1, 0);
+    gptr[offset+12] = int14_23(0, 1);
+    gptr[offset+13] = int14_23(1, 1);
     //third order
-    gptr[14] = int12_34_56();
-    gptr[15] = int12_35_46();
-    gptr[16] = int12_36_45();
+    gptr[offset+14] = int12_34_56();
+    gptr[offset+15] = int12_35_46();
+    gptr[offset+16] = int12_36_45();
    
-    gptr[17] = int13_24_56();
-    gptr[18] =  int13_25_46();
-    gptr[19] = int13_26_45();
+    gptr[offset+17] = int13_24_56();
+    gptr[offset+18] =  int13_25_46();
+    gptr[offset+19] = int13_26_45();
     
-    gptr[20] = int14_23_56();
-    gptr[21] = int14_25_36();
-    gptr[22] = int14_26_35();
+    gptr[offset+20] = int14_23_56();
+    gptr[offset+21] = int14_25_36();
+    gptr[offset+22] = int14_26_35();
     
-    gptr[23] =  int15_23_46();
-    gptr[24] = int15_24_36();
-    gptr[25] = int15_26_34();
+    gptr[offset+23] =  int15_23_46();
+    gptr[offset+24] = int15_24_36();
+    gptr[offset+25] = int15_26_34();
     
-    gptr[26] = int16_23_45();
-    gptr[27] = int16_24_35();
-    gptr[29] = int16_25_34();
+    gptr[offset+26] = int16_23_45();
+    gptr[offset+27] = int16_24_35();
+    gptr[offset+28] = int16_25_34();
+
+
+    double pl = proteinLen;
+    double pl2 = pl*pl;
+    double pl3 = pl*pl2;
+
+    // coefficient
+    double coefficient[30]=
+    {
+        70.2135*1.339875
+        ,pl*0.0401388*1.030110, pl*0.0730344*1.222925
+        ,pl2*0.0014755*1.200300, pl2*0.00533629*1.050380, pl2*0.00513504*1.058926
+        ,pl2*0.0157794*1.174822, pl2*5.7905e-05*1.462006, pl2*0.000460471*1.044327
+        ,pl2*0.000485036*1.095845, pl2*0.00418937*1.282707, pl2*0.000188964*1.097088
+        ,pl2*0.00269016*0.9816835, pl2*0.000892068*1.153978, pl2*0.00758828*1.241605
+        ,pl3*3.7779e-05*1.394955, pl3*2.17081e-06*1.615541, pl3*2.98437e-06*1.098159
+        ,pl3*2.21604e-06*1.592069, pl3*5.8425e-08*1.692098, pl3* 3.64209e-07*1.070658
+        ,pl3*3.60442e-06*1.049276, pl3*6.07681e-08*1.313312, pl3*6.60069e-08*1.148898
+        ,pl3*2.95267e-07*1.402297, pl3*5.84497e-08*1.369921, pl3*2.98807e-07*1.291011
+        ,pl3*3.66585e-06*1.254290, pl3*2.25853e-07*1.359014, pl3*4.20434e-07*1.271251
+    };
+    if(CylinderTransform)
+       for(int i = 0; i < 30; i++)
+            gptr[i] /= coefficient[i];
 
 }
 

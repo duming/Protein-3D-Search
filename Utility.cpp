@@ -119,7 +119,17 @@ void Utility::vectCross(POINT &result, POINT const &op1, POINT const &op2)
 
 
 
-void Utility:: readGIs(std::string fileName, std::vector<std::vector<double> > &result)
+double Utility::round_to_digits(double value, int digits)
+{
+    if (value == 0.0) // otherwise it will return 'nan' due to the log10() of zero
+        return 0.0;
+
+    double factor = pow(10.0, digits - ceil(log10(fabs(value))));
+    return round(value * factor) / factor;   
+}
+
+
+void Utility:: readGIs(std::string fileName, std::vector<std::vector<double> > &result, bool isTrans)
 {
     std::ifstream infile(fileName);
     if(!infile.is_open())
@@ -128,8 +138,14 @@ void Utility:: readGIs(std::string fileName, std::vector<std::vector<double> > &
         return;
     }
     
+    int ds_len;
+    if(isTrans)
+        ds_len = 30;
+    else
+        ds_len = 29;
+
     std::vector<double> tmpvct;
-    tmpvct.resize(29);
+    tmpvct.resize(ds_len);
     std::string tmpstr;
    
     double foo;
@@ -148,11 +164,11 @@ void Utility:: readGIs(std::string fileName, std::vector<std::vector<double> > &
 
    
         int i;
-        for(i=0;i<29;i++)
+        for(i=0;i<ds_len;i++)
             if(!(infile>>tmpvct[i]))
                 break;
 
-        if(i==29)
+        if(i==ds_len)
             result.push_back(tmpvct);
         else
             break;
