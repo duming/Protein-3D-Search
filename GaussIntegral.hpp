@@ -17,65 +17,14 @@
 
 class GaussIntegral
 {
-    template<class T>
-    class SquareArray
-    {
-    public:
-        SquareArray(int size)
-        {
-            this->maxSize = size;
-            base = new T[maxSize*maxSize];
-        }
-        ~SquareArray()
-        {   
-            delete[] base;
-        }
-
-        inline T& operator () (int row, int colum)
-        {
-            //if(row>=size || colum>=size || row<0 || colum<0)
-            //    throw std::out_of_range("SquareArray index out of range");
-            return base[row*size+colum];
-        }
-
-        bool resize(int newSize)
-        {
-            size = newSize;
-            if(newSize <= maxSize)
-                return false;
-
-            maxSize = newSize*1.5;
-            delete [] base;
-            base = new T[maxSize* maxSize];
-            return true;
-        }
-
-        void printArry()
-        {
-            for(int i=0; i < size; i++)
-            {
-                for(int j = 0; j < size; j++)
-                    std::cout<<base[i*size + j]<<'\t';
-                std::cout<<std::endl;
-                std::cout<<"#########################"<<std::endl;
-            }
-        }
-
-    private:
-        T* base;
-        int size;
-        int maxSize;
-    };
-
 
     public:
-    GaussIntegral(int maxlen, bool isTrans = true):unitvector(maxlen),omega(maxlen)
-                              ,absomega(maxlen),partsum(maxlen)
-                              ,abspartsum(maxlen)
+    GaussIntegral(int maxlen, bool isTrans = true)
     {
         maxLen = maxlen; 
         currentProtein = NULL;
         CylinderTransform = isTrans;
+        initAll();
     }
 
     ~GaussIntegral()
@@ -92,12 +41,12 @@ class GaussIntegral
     void setProtein(std::vector<POINT> * Pptr)
     {   
         int newSize = Pptr->size();
-        unitvector.resize(newSize);
-        omega.resize(newSize);
-        absomega.resize(newSize);
-        partsum.resize(newSize);
-        if( abspartsum.resize(newSize))
+        if(newSize > maxLen)
+        {
             maxLen = newSize;
+            freeAll();
+            initAll();
+        }
         currentProtein = Pptr;
         proteinLen = Pptr->size();
     }
@@ -191,14 +140,32 @@ class GaussIntegral
     void GaussAll(double * gptr);
 
 
+    private:
+    template<class T>
+    void initArray(T *& base, T **&array, int size);
 
+    template<class T>
+    void freeArray(T *& base, T **&array);
+
+    template<class T>
+    void printArray(T**array, int size);
+
+    void initAll(void);
+    void freeAll(void);
 
     private:
-    SquareArray<POINT> unitvector;
-    SquareArray<double> omega;
-    SquareArray<double> absomega;
-    SquareArray<double> partsum;
-    SquareArray<double> abspartsum;
+    POINT **unitvector;
+    double ** omega;
+    double ** absomega;
+    double ** partsum;
+    double ** abspartsum;
+
+    POINT * unitvectorBase;
+    double * omegaBase;
+    double * absomegaBase;
+    double * partsumBase;
+    double * abspartsumBase;
+
 
     std::vector<POINT>* currentProtein;
     int proteinLen;
