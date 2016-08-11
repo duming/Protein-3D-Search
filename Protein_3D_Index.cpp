@@ -1,6 +1,5 @@
 #include "Protein_3D_Index.hpp"
-
-
+#include <sys/time.h>
     
 
 void* Protein_3D_Index::
@@ -38,13 +37,16 @@ PDBReader(void* ptr)
     //check if is the last PDBreader thread
     TPptr->p_num--;
     if(TPptr->p_num == 0)
-        for(int i=0;i<TPptr->c_num;i++)
+    {
+        int c_num = TPptr->c_num;
+        pthread_mutex_unlock(TPptr->mt);
+        for(int i=0;i<c_num;i++)
         {//put stop tokens for consumer threads;
             Buf_Unit_Points& Unit = Pptr->RWBuf->startWrite();
             Unit.isEnd = true;
             Pptr->RWBuf->endWrite();
         }
-    pthread_mutex_unlock(TPptr->mt);
+    }
     return NULL;
 }
 
@@ -57,6 +59,7 @@ Consumer(void*ptr)
     CathData * Cptr = &Pptr->cdata;
     vector<POINT> tempPoints;
     tempPoints.reserve(PROTEIN_DEFAULT_LENGTH);
+    GaussIntegral gi(1500,true);
     int domain_idx;
 
     //increase the consumer thread number 
@@ -66,23 +69,31 @@ Consumer(void*ptr)
 
     while(true)
     {
+        //start reading data
         const Buf_Unit_Points& unit = Pptr->RWBuf->startRead();
         if(true == unit.isEnd)
             break;
         tempPoints = unit.points; 
         domain_idx = unit.domain_idx;
         Pptr->RWBuf->endRead();
+        //end of reading
+       
+        //processing data
+        gi.setProtein(&tempPoints);
+        gi.GaussAll((*Cptr)[domain_idx].descriptor); 
+
+
 
         //for test
         pthread_t tid;
         tid = pthread_self();
         pthread_mutex_lock(TPptr->mt);
         cout<<tid<<":read "<<endl;
-        for(int i=0;i<tempPoints.size();i++)
-            cout<<tempPoints[i]<<endl;
-        cout<<endl;
+        //for(int i=0;i<tempPoints.size();i++)
+        //    cout<<tempPoints[i]<<endl;
+        //cout<<endl;
+        (*Cptr)[domain_idx].printDomain(1|2|4);
         pthread_mutex_unlock(TPptr->mt);
-
     }
     //decrease the consumer thread number 
     pthread_mutex_lock(TPptr->mt);
@@ -124,7 +135,7 @@ int Protein_3D_Index:: MultiCalGI()
     {
         //for test
         TP.startPos = 0;
-        TP.endPos = 100;
+        TP.endPos = cdata.size() -1;
 
         //for test end
 	    iret1 = pthread_create( &threadc[i], NULL, Consumer, (void*) &TP);
@@ -158,12 +169,32 @@ return 1;
 int Protein_3D_Index:: BuildIndex()
 {
     // 1. load cath list file
-    cdata.readList();
-    cdata.printDomains(0,99);
+    //cdata.readList();
+    cdata.fakeList("data/testpdb");
+//    cdata.printDomains(0,99);
 
     // 2. calculate GI
-    MultiCalGI();
+ 
+    struct timespec start, finish;
+    double elapsed;
+
+
+    timeval time1,time2;
+    long millis1, millis2; 
     
+    gettimeofday(&time1, NULL);
+    MultiCalGI();
+    gettimeofday(&time2, NULL);
+
+
+    millis1 = (time1.tv_sec * 1000) + (time1.tv_usec / 1000);
+    
+    millis2 = (time2.tv_sec * 1000) + (time2.tv_usec / 1000);
+    
+    cout<<millis2-millis1<<endl;
+
+    //cdata.printDomains(0,-1,1|2|4);
+
     // 3. construct the index according to the Gauss Integral
 
     return 0;

@@ -248,13 +248,13 @@ int main()
 
    // producer_consumer_test();
    
-    //Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+    Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
 
-    //P3DIdx.BuildIndex();
+      P3DIdx.BuildIndex();
     
 
-    GaussIntegral gi(1000,true);
-    gi.test();
+//    GaussIntegral gi(1000,true);
+//    gi.test();
     
 
 

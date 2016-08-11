@@ -7,7 +7,7 @@
 //number of producer
 #define P_NUM 1
 //number of consumer
-#define C_NUM 2
+#define C_NUM 8
 
 #define PROTEIN_DEFAULT_LENGTH 1024
 #define BUFFER_DEFAULT_LENGTH 100

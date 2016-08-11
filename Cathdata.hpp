@@ -35,16 +35,17 @@ class Cathdomain
 
     
 
-        void printDomain();
-        
+        void printDomain(int option);
+    public:
+        //Calculated Descriptors such as Gauss Integral
+        double descriptor[DESCRIPTOR_LENGTH];
+
+
     private:
 
         static char* inputBuff;
 
-        //Calculated Descriptors such as Gauss Integral
-        double descriptor[DESCRIPTOR_LENGTH];
-
-        ////////////////////////
+                ////////////////////////
         //cath PDB file
         /////////////////////////
         //the coordinates of c-alpha atoms
@@ -85,10 +86,16 @@ class CathData
         ~CathData()
         {}
 
-       
-        bool readList();
+      
+        // read cathList file and return the length of the list
+        int readList();
 
-        void printData();
+
+        // pure for test fake a list of pdb file names by reading all files
+        // in a directory
+        int fakeList(std::string);
+
+        void printData(int option);
 
         void test();
 
@@ -98,10 +105,17 @@ class CathData
         }
 
 
-        void printDomains(int start, int end)
+        void printDomains(int start = 0, int end = -1, int option= 1|2)
         {
+            if(end == -1)
+                end = domain_num -1;
             for(int i=start ; i<=end;i++)
-                domains[i].printDomain();
+                domains[i].printDomain(option);
+        }
+
+        int size()
+        {
+            return domain_num;
         }
 
     private:

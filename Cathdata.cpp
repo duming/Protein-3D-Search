@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <iomanip>
 using namespace std;
 string CathData::dataPath = DATAPATH;
 string CathData::domainPath = DOMAINPATH;
@@ -14,13 +14,35 @@ char* Cathdomain:: inputBuff = new char[BUFFLENGTH];
 char* CathData:: inputBuff = new char[BUFFLENGTH];
 
 
-void Cathdomain:: printDomain()
+void Cathdomain:: printDomain(int option)
 {
-    cout<<domainName<<'\t';
-    for(int i=0; i< CATE_LENGTH_DEFAULT; i++)
-        cout<<category[i]<<'\t';
-    cout<<domainLength<<'\t';
-    cout<<resolution<<endl;
+    if(option&1)
+    {
+        //print name
+        cout<<domainName<<'\t';
+    }
+
+    if(option&2)
+    {
+        //print category
+        for(int i=0; i< CATE_LENGTH_DEFAULT; i++)
+            cout<<category[i]<<'\t';
+        cout<<domainLength<<'\t';
+        cout<<resolution<<endl;
+    }
+
+    if(option&4)
+    {
+        //print descriptor
+        int num_per_line = 6;
+        for(int i=0; i < DESCRIPTOR_LENGTH; i++)
+        {
+            cout<<setw(10)<<descriptor[i]<<'\t';
+            if(i%num_per_line == num_per_line-1)
+                cout<<endl;
+        }
+        cout<<endl;
+    }
 }
 
 
@@ -63,7 +85,7 @@ bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)
     return true;
 }
 
-bool CathData:: readList()
+int CathData:: readList()
 {
     ifstream infile(dataPath + listFileName);
     if(!infile.is_open())
@@ -87,7 +109,7 @@ bool CathData:: readList()
         if(tokens.size() != 12)
         {
             cout<<"CLF format error"<<endl;
-            return false;
+            return 0;
         }
         
         //read domain name
@@ -105,16 +127,33 @@ bool CathData:: readList()
     }
     domain_num = domains.size();
 
-    return true;
+    return domain_num;
 }
 
 
-void CathData::printData()
+
+
+int CathData::fakeList(string directory)
+{
+    vector<string> fileList;
+    Utility::listFiles(directory, fileList);
+    Cathdomain tempd;
+    for(int i = 0; i < fileList.size(); i++)
+    {
+        tempd.domainName = fileList[i];
+        domains.push_back(tempd);
+    }
+    domain_num = fileList.size();
+    return fileList.size();
+}
+
+
+void CathData::printData(int option)
 {
     for(int i=0; i< domain_num ; i++)
     {
         cout<<i<<"\t:\t";
-        domains[i].printDomain();
+        domains[i].printDomain(option);
     }
 }
 
