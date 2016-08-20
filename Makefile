@@ -23,14 +23,17 @@ LIB_OBJ :=  $(wildcard $(patsubst  %,%*.cpp,$(LIB_DIR)))
 #	@echo $(LIB_OBJ)
 
 executable : $(MAIN_OBJ) 
-	$(CXX) $(flags) $(INCLUDE_PATH) -o $(TITLE_NAME) $^
+	$(CXX) $(FLAGS) $(INCLUDE_PATH) -o $(TITLE_NAME) $^
 
 
 #$(LIB_OBJ) : 
 #$(OBJ_DIR)/lib/%.o : lib/%.cpp
-#	$(CXX) $(flags) $(INCLUDE_PATH)  -c $< -o $@
+#	$(CXX) $(FLAGS) $(INCLUDE_PATH)  -c $< -o $@
 
 $(MAIN_OBJ) :
 $(OBJ_DIR)/%.o : %.cpp
-	$(CXX) $(flags)  $(INCLUDE_PATH)  -c $< -o $@
+	$(CXX) $(FLAGS)  $(INCLUDE_PATH)  -c $< -o $@
 
+
+clean:
+	rm $(MAIN_OBJ) $(LIB_OBJ)

@@ -118,6 +118,11 @@ class CathData
             return domain_num;
         }
 
+
+        //save all descriptors to binary file in order to 
+        //build SLH index
+        void saveDescriptor(std::string fileName);
+
     private:
         static char*inputBuff;
 

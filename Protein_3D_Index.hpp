@@ -3,7 +3,7 @@
 
 #include "Utility.hpp"
 #include "CathData.hpp"
-
+#include "lshbox/lshbox.h"
 //number of producer
 #define P_NUM 1
 //number of consumer
@@ -11,6 +11,8 @@
 
 #define PROTEIN_DEFAULT_LENGTH 1024
 #define BUFFER_DEFAULT_LENGTH 100
+
+typedef double INDEX_DATA_TYPE;
 using namespace std;
 
 
@@ -27,14 +29,16 @@ public:
 class Protein_3D_Index
 {
 public:
-    Protein_3D_Index(string fileName):cdata(fileName)
+    Protein_3D_Index(string fileName):cdata(fileName),lshIndex()
     {
     }
     ~Protein_3D_Index()
     {
     }
-
+    //one function for Protein descriptor calculation and lsh index making
     int BuildIndex();
+
+
 
     static void* PDBReader(void* ptr);
 
@@ -46,9 +50,17 @@ private:
     //  the reader threads also responsible for writing the c-alpha atoms'
     //  coordinates into intermediate files
     int MultiCalGI();
+
+    //build the Locality sensitive hashing index using the lshbox tool
+    //input: 1. the data matrix that needs to be hashed
+    //       2. hash table size
+    //output: save the index file to indexfile
+    void LSH(lshbox::Matrix<INDEX_DATA_TYPE> &data, string indexFile, int htSize);
 private:
     CathData cdata;    
     ReadWriteBuffer<Buf_Unit_Points> *RWBuf;
+    // descriptor data matrix
+    lshbox::kdbqLsh<INDEX_DATA_TYPE> lshIndex;
 };
 
 

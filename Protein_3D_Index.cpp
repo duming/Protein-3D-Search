@@ -1,5 +1,7 @@
 #include "Protein_3D_Index.hpp"
 #include <sys/time.h>
+
+#include "lshbox/lshbox.h"
     
 
 void* Protein_3D_Index::
@@ -166,6 +168,34 @@ int Protein_3D_Index:: MultiCalGI()
 return 1;
 }
 
+
+
+
+void Protein_3D_Index::LSH(lshbox::Matrix<INDEX_DATA_TYPE> &data, string indexFile, int htSize)
+{
+   // lshbox::kdbqLsh<INDEX_DATA_TYPE> lshIndex;
+	{
+	    lshbox::kdbqLsh<INDEX_DATA_TYPE>::Parameter param;
+	    param.M = htSize;
+	    param.L = 15;
+	    param.D = DESCRIPTOR_LENGTH;
+	    //due to the pca operation of lshBox, 
+        //it's requires that N <= D
+        param.N = 20;
+	    param.I = 50;
+	    lshIndex.reset(param);
+	    lshIndex.train(data);
+	}
+	lshIndex.save(indexFile);
+}
+
+
+vector<pair<float, unsigned> > & DesQuery(INDEX_DATA_TYPE* des)
+{
+
+}
+
+
 int Protein_3D_Index:: BuildIndex()
 {
     // 1. load cath list file
@@ -187,15 +217,59 @@ int Protein_3D_Index:: BuildIndex()
     gettimeofday(&time2, NULL);
 
 
-    millis1 = (time1.tv_sec * 1000) + (time1.tv_usec / 1000);
-    
-    millis2 = (time2.tv_sec * 1000) + (time2.tv_usec / 1000);
-    
+    millis1 = (time1.tv_sec * 1000) + (time1.tv_usec / 1000);   
+    millis2 = (time2.tv_sec * 1000) + (time2.tv_usec / 1000); 
     cout<<millis2-millis1<<endl;
+
 
     //cdata.printDomains(0,-1,1|2|4);
 
     // 3. construct the index according to the Gauss Integral
 
-    return 0;
+    //save Descriptors in binary file
+    string indexPath = "index/";
+    string desName = "descriptors.data";
+    cdata.saveDescriptor( indexPath + desName);
+   
+    typedef double DATATYPE;
+    lshbox::Matrix<DATATYPE> data( indexPath + desName);
+        
+    //read descriptor data test
+    double* dims;
+    int dim, N;
+    dim = data.getDim();
+    N = data.getSize();
+    cout<< dim - DESCRIPTOR_LENGTH<<" "<<N - cdata.size()<<endl;
+    for(int i =0 ; i < N; i++)
+        for(int j = 0; j < dim; j++)
+            if(abs(data[i][j] - cdata[i].descriptor[j]) > 0.001)
+                cout<<'('<<i<<','<<j<<')'<<'\t'<<data[i][j]<<'\t'<<cdata[i].descriptor[j]<<endl;
+    //end of test     
+    
+    int hashTableSize = data.getSize()/10;
+    string indexFile = "test.index";
+    LSH(data, indexPath + indexFile, hashTableSize); 
+
+
+    //query test
+    lshbox::Matrix<INDEX_DATA_TYPE>::Accessor accessor(data);
+    lshbox::Metric<INDEX_DATA_TYPE> metric(data.getDim(), L2_DIST);
+    unsigned K = 50;
+    lshbox::Scanner<lshbox::Matrix<INDEX_DATA_TYPE>::Accessor> scanner(
+                accessor,
+                metric,
+                K
+    );
+    scanner.reset(data[0]);
+    lshIndex.query(data[0], scanner);
+    lshbox::Topk & result = scanner.topk();    
+    result.genTopk();
+    std::vector<std::pair<float, unsigned> > &tops
+        =result.getTopk();
+
+
+    for(int i=0; i < tops.size(); i++)
+        cout<<tops[i].first<<","<<tops[i].second<<endl;
+
+	return 0;
 }

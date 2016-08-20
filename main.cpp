@@ -6,6 +6,8 @@
 #include "GaussIntegral.hpp"
 #include <time.h>
 #include <unistd.h>
+#include "lshbox/lshbox.h"
+
 using namespace std;
 ///////////////////////////////////
 //        semaphore test
@@ -221,6 +223,51 @@ void vectortest()
 }
 
 
+
+void DescriptorSavingTest()
+{
+    //Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+    //P3DIdx.BuildIndex();
+
+    
+}
+
+
+void lshtest()
+{
+    typedef double DATATYPE;
+    std::cout << "LOADING DATA ..." << std::endl;
+    lshbox::timer timer;
+    lshbox::Matrix<DATATYPE> data("sampleData");
+    std::cout << "LOAD TIME: " << timer.elapsed() << "s." << std::endl;
+
+    std::cout << "CONSTRUCTING INDEX ..." << std::endl;
+	timer.restart();
+	std::string file("index/testindex");
+	bool use_index = false;
+	lshbox::psdLsh<DATATYPE> mylsh;
+	if (use_index)
+	{
+	    mylsh.load(file);
+	}
+	else
+	{
+	    lshbox::psdLsh<DATATYPE>::Parameter param;
+	    param.M = 1000;
+	    param.L = 100;
+	    param.D = 30;
+	    param.T = 2;
+	    param.W = 10;
+	    mylsh.reset(param);
+	    //mylsh.train(data);
+	    mylsh.hash(data);
+	}
+	mylsh.save(file);
+	std::cout << "CONSTRUCTING TIME: " << timer.elapsed() << "s." << std::endl;
+	std::cout << "LOADING BENCHMARK ..." << std::endl;
+}
+
+
 int main()
 {
     string ss("123  333 44 55");
@@ -248,9 +295,9 @@ int main()
 
    // producer_consumer_test();
    
-    Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
 
-      P3DIdx.BuildIndex();
+    Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+    P3DIdx.BuildIndex();
     
 
 //    GaussIntegral gi(1000,true);
@@ -266,6 +313,29 @@ int main()
 //    CathData cd("CathDomainList.v4.0.0.txt");
 //    cd.test();
 
+//    lshtest();
+    
+   // DescriptorSavingTest();
+   
+
+    /*
+    unsigned arry[3] = {8,281,30};
+    unsigned arry2[3];
+    cout<<arry[0]<<'\t'<<arry[1]<<'\t'<<arry[2]<<endl;
+
+    ofstream of("test.data",ofstream::binary);
+    of.write((char*)arry, sizeof arry);
+    of.close();
+
+    ifstream infile("test.data",std::ios::binary );
+    infile.read((char*)arry2, sizeof(arry));
+    infile.close(); 
+    cout<<arry2[0]<<'\t'<<arry2[1]<<'\t'<<arry2[2]<<endl;
+
+    typedef double DATATYPE;
+    lshbox::timer timer;
+    lshbox::Matrix<DATATYPE> data("test.data");
+*/
 
     return 0;
 }

@@ -159,6 +159,32 @@ void CathData::printData(int option)
 
 
 
+void CathData::saveDescriptor(string fileName)
+{
+    ofstream outfile(fileName, ofstream::binary);
+    unsigned dataheader[3];
+    //output the size of data type
+    dataheader[0] = (unsigned)sizeof(double);
+    //output number of number and dimension of descriptor
+    dataheader[1] = (unsigned)domains.size();
+    dataheader[2] = (unsigned)DESCRIPTOR_LENGTH;
+    outfile.write((char*)dataheader,sizeof dataheader);
+
+    //output the actual data
+    double *buffer = new double[domains.size() * DESCRIPTOR_LENGTH];
+    for( int i=0; i < domains.size(); i++)
+        for( int j=0; j < DESCRIPTOR_LENGTH; j++)
+            buffer[i*DESCRIPTOR_LENGTH + j] = domains[i].descriptor[j];
+
+    outfile.write((char*)buffer, sizeof(double)* domains.size() * DESCRIPTOR_LENGTH);
+    //free memory
+    delete [] buffer;
+    //close file
+    outfile.close();
+
+}
+
+
 
 void CathData:: test()
 {
