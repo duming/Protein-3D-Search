@@ -457,6 +457,16 @@ void lshbox::kdbqLsh<DATATYPE>::load(const std::string &file)
     in.read((char *)&param.L, sizeof(unsigned));
     in.read((char *)&param.D, sizeof(unsigned));
     in.read((char *)&param.N, sizeof(unsigned));
+    //load the u0 u1 u2
+    u0.resize(param.L, param.N);
+    u1.resize(param.L, param.N);
+    u2.resize(param.L, param.N);
+    in.read((char *)u0.data(), sizeof(float) * param.L * param.N); 
+    in.read((char *)u1.data(), sizeof(float) * param.L * param.N);
+    in.read((char *)u2.data(), sizeof(float) * param.L * param.N);
+
+
+
     tables.resize(param.L);
     rndArray.resize(param.L);
     pcsAll.resize(param.L);
@@ -496,6 +506,13 @@ void lshbox::kdbqLsh<DATATYPE>::save(const std::string &file)
     out.write((char *)&param.L, sizeof(unsigned));
     out.write((char *)&param.D, sizeof(unsigned));
     out.write((char *)&param.N, sizeof(unsigned));
+
+
+    //save the u0 u1 u2
+    out.write((char*)u0.data(), sizeof(float) * param.L * param.N);
+    out.write((char*)u1.data(), sizeof(float) * param.L * param.N); 
+    out.write((char*)u2.data(), sizeof(float) * param.L * param.N);
+
     for (int i = 0; i != param.L; ++i)
     {
         out.write((char *)&rndArray[i][0], sizeof(unsigned) * param.N);
