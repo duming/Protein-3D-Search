@@ -120,6 +120,81 @@ public:
      * @param file The path of binary file.
      */
     void save(const std::string &file);
+
+
+    //for debug
+    bool operator ==(const kdbqLsh<DATATYPE> & op2) const
+    {
+        if(param.M != op2.param.M)
+        {
+            std::cout<<"size not equal:("<<param.M<<','<<op2.param.M<<std::endl;
+            return false;
+        }
+        if(param.L != op2.param.L)
+        {
+            std::cout<<"table number not equal:("<<param.L<<','<<op2.param.L<<std::endl;
+            return false;
+        }
+        if(param.D != op2.param.D)
+        {
+            std::cout<<"dimension not equal:("<<param.D<<','<<op2.param.D<<std::endl;
+            return false;
+        }
+        if(param.N != op2.param.N)
+        {
+            std::cout<<"binary number not equal:("<<param.N<<','<<op2.param.N<<std::endl;
+            return false;
+        }
+
+        bool ret = true;
+        //check u0, u1, u2
+        double dist = (u0 - op2.u0).norm() ;
+        if(dist!= 0)
+        {
+            std::cout<<"u0 not equal:"<<dist<<std::endl;
+            ret =  false;
+        }
+        dist = (u1 - op2.u1).norm(); 
+        if(dist != 0)
+        {
+            std::cout<<"u1 not equali:"<<dist<<std::endl;
+            ret =  false;
+        }
+        dist =(u2 - op2.u2).norm() ;
+        if(dist != 0)
+        {
+            std::cout<<"u2 not equal"<<dist<<std::endl;
+            ret =  false;
+        }
+
+        if(pcsAll != op2.pcsAll)
+        {
+            std::cout<<"pcsAll not equal"<<std::endl;
+            ret =  false;
+        }
+        if(omegasAll != op2.omegasAll)
+        {
+            std::cout<<"omegassAll not equal"<<std::endl;
+            ret = false;
+        }
+        if(rndArray != op2.rndArray)
+        {
+            std::cout<<"rndArray not equal"<<std::endl;
+            if( rndArray.size() != op2.rndArray.size())
+                std::cout<<"dimension 1 not equal"<<std::endl;
+            else
+            {
+                for(int i=0; i< rndArray.size() ;i++)
+                    if(rndArray[i] != op2.rndArray[i])
+                        std::cout<<"row "<<i<<"not equal"<<std::endl;
+            }
+
+            ret =  false;
+        }
+
+        return ret;
+    }
+
 private:
     Parameter param;
     std::vector<std::vector<std::vector<float> > >  pcsAll;
@@ -439,8 +514,10 @@ void lshbox::kdbqLsh<DATATYPE>::query(const DATATYPE *domin, SCANNER &scanner)
 
         }
         unsigned hashVal = sum % param.M;
+        //std::cout<<"hash:"<<hashVal<<'\t'<<sum<<std::endl;
         if (tables[k].find(hashVal) != tables[k].end())
         {
+            //std::cout<<k<<std::endl;
             for (std::vector<unsigned>::iterator iter = tables[k][hashVal].begin(); iter != tables[k][hashVal].end(); ++iter)
             {
                 scanner(*iter);
@@ -466,6 +543,7 @@ void lshbox::kdbqLsh<DATATYPE>::load(const std::string &file)
     in.read((char *)u2.data(), sizeof(float) * param.L * param.N);
 
 
+    //std::cout<<u1<<std::endl;
 
     tables.resize(param.L);
     rndArray.resize(param.L);
@@ -473,8 +551,8 @@ void lshbox::kdbqLsh<DATATYPE>::load(const std::string &file)
     omegasAll.resize(param.L);
     for (unsigned i = 0; i != param.L; ++i)
     {
-        rndArray[i].resize(param.N);
-        in.read((char *)&rndArray[i][0], sizeof(unsigned) * param.N);
+        rndArray[i].resize(param.N *2);
+        in.read((char *)&rndArray[i][0], sizeof(unsigned) * param.N*2);
         unsigned count;
         in.read((char *)&count, sizeof(unsigned));
         for (unsigned j = 0; j != count; ++j)
@@ -497,6 +575,9 @@ void lshbox::kdbqLsh<DATATYPE>::load(const std::string &file)
         }
     }
     in.close();
+
+
+   
 }
 template<typename DATATYPE>
 void lshbox::kdbqLsh<DATATYPE>::save(const std::string &file)
@@ -509,13 +590,17 @@ void lshbox::kdbqLsh<DATATYPE>::save(const std::string &file)
 
 
     //save the u0 u1 u2
+    std::cout<<u0<<std::endl;
     out.write((char*)u0.data(), sizeof(float) * param.L * param.N);
     out.write((char*)u1.data(), sizeof(float) * param.L * param.N); 
     out.write((char*)u2.data(), sizeof(float) * param.L * param.N);
 
+
+    
+
     for (int i = 0; i != param.L; ++i)
     {
-        out.write((char *)&rndArray[i][0], sizeof(unsigned) * param.N);
+        out.write((char *)&rndArray[i][0], sizeof(unsigned) * param.N*2);
         unsigned count = unsigned(tables[i].size());
         out.write((char *)&count, sizeof(unsigned));
         for (std::map<unsigned, std::vector<unsigned> >::iterator iter = tables[i].begin(); iter != tables[i].end(); ++iter)
