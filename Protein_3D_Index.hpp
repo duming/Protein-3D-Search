@@ -44,6 +44,12 @@ public:
 
     static void* Consumer(void*ptr);
 
+
+    lshbox::kdbqLsh<INDEX_DATA_TYPE>& getIndex()
+    {
+        return lshIndex;
+    }
+
 private:
     // create threads to read pdb files into buffer
     //  and threads that read the buffer and calculate the GaussIntegral

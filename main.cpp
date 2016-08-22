@@ -7,6 +7,8 @@
 #include <time.h>
 #include <unistd.h>
 #include "lshbox/lshbox.h"
+#include "Protein_search_engine.hpp"
+#include "Eigen/dense"
 
 using namespace std;
 ///////////////////////////////////
@@ -296,9 +298,7 @@ int main()
    // producer_consumer_test();
    
 
-    Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
-    P3DIdx.BuildIndex();
-    
+   
 
 //    GaussIntegral gi(1000,true);
 //    gi.test();
@@ -336,7 +336,97 @@ int main()
     lshbox::timer timer;
     lshbox::Matrix<DATATYPE> data("test.data");
 */
+   Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+   P3DIdx.BuildIndex();
 
+
+    lshbox::Matrix<double> data("index/descriptors.data");
+
+
+    {
+    int hit = 0;
+    for(int j = 0; j < data.getSize(); j++)
+    {
+        //Index_query idq(20, data, P3DIdx.getIndex());
+
+        Index_query idq(20, data, "index/test.index");
+
+       // cout<<(idq.getIndex() == P3DIdx.getIndex())<<endl;
+
+        vector<pair<float, unsigned> > result;
+        vector<pair<float, unsigned> >::iterator it;
+ 
+        idq.desQuery(result, data[j]);
+        it = find(result.begin(),result.end(), pair<float, unsigned>(0,j));
+        if(it != result.end())
+            hit++;
+
+        for(int i=0; i < result.size(); i++)
+        {
+            cout<<result[i].first<<","<<result[i].second<<endl;
+        }
+        cout<<endl;
+    }
+
+    cout<<(float)hit/data.getSize()<<endl;
+    }
+
+
+/*
+    Eigen::MatrixXf m(3,3);
+    m(0,0) = NAN; 
+    cout<<m<<endl;
+    float val = 20 - m(0,0);
+    cout<<val<<endl;
+    val = fabsf(val);
+    cout<<val<<endl;
+
+    cout<<( val<10)<<endl;
+    cout<<( val == 10)<<endl;
+    cout<<( val>10)<<endl;
+    
+  */  
+    
+
+/*
+    vector<vector<unsigned> > x;
+    x.resize(4);
+    for(int i=0; i < 4 ; i++)
+    {
+        x[i].resize(4);
+        for(int j=0;j<4;j++)
+            x[i][j] = i*j;
+    }
+    vector<vector<unsigned> > x2;
+    x2.resize(4);
+    for(int i=0; i < 4 ; i++)
+    {
+        x2[i].resize(4);
+        for(int j=0;j<4;j++)
+            x2[i][j] = i*j;
+    }
+
+
+    cout<< (x==x2)<<endl;
+*/
+    /*
+    //matrix file operation test
+    srand((unsigned int) time(0));
+    Eigen::MatrixXf m = Eigen::MatrixXf::Random(10,10);
+    m(0,0) = NAN;
+    cout<<m<<endl;
+    ofstream outf("test.mat",ofstream::binary);
+    outf.write((char*) m.data(), sizeof(float) * 10 * 10);
+    outf.close();
+
+    Eigen::MatrixXf m2(10,10);
+
+    ifstream infile("test.mat", ifstream::binary);
+    infile.read((char*) m2.data(), sizeof(float) * 10 * 10);
+    infile.close();
+
+    cout<<(m -m2).norm()<<endl;
+    */
     return 0;
 }
 

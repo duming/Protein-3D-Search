@@ -177,11 +177,11 @@ void Protein_3D_Index::LSH(lshbox::Matrix<INDEX_DATA_TYPE> &data, string indexFi
 	{
 	    lshbox::kdbqLsh<INDEX_DATA_TYPE>::Parameter param;
 	    param.M = htSize;
-	    param.L = 15;
+	    param.L = 20;
 	    param.D = DESCRIPTOR_LENGTH;
 	    //due to the pca operation of lshBox, 
         //it's requires that N <= D
-        param.N = 20;
+        param.N = 2;
 	    param.I = 50;
 	    lshIndex.reset(param);
 	    lshIndex.train(data);
@@ -233,7 +233,7 @@ int Protein_3D_Index:: BuildIndex()
    
     typedef double DATATYPE;
     lshbox::Matrix<DATATYPE> data( indexPath + desName);
-        
+
     //read descriptor data test
     double* dims;
     int dim, N;
@@ -246,11 +246,11 @@ int Protein_3D_Index:: BuildIndex()
                 cout<<'('<<i<<','<<j<<')'<<'\t'<<data[i][j]<<'\t'<<cdata[i].descriptor[j]<<endl;
     //end of test     
     
-    int hashTableSize = data.getSize()/10;
+    int hashTableSize = 500;
     string indexFile = "test.index";
     LSH(data, indexPath + indexFile, hashTableSize); 
 
-
+/*
     //query test
     lshbox::Matrix<INDEX_DATA_TYPE>::Accessor accessor(data);
     lshbox::Metric<INDEX_DATA_TYPE> metric(data.getDim(), L2_DIST);
@@ -270,6 +270,6 @@ int Protein_3D_Index:: BuildIndex()
 
     for(int i=0; i < tops.size(); i++)
         cout<<tops[i].first<<","<<tops[i].second<<endl;
-
+*/
 	return 0;
 }
