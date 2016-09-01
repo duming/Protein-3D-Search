@@ -95,6 +95,10 @@ class CathData
         // in a directory
         int fakeList(std::string);
 
+
+        // save the CathData to a cathList File
+        int saveList(std::string fileName);
+
         void printData(int option);
 
         void test();
@@ -119,8 +123,42 @@ class CathData
         }
 
 
-        //save all descriptors to binary file in order to 
-        //build SLH index
+        bool operator ==(const CathData & op2) const
+        {
+            //check length
+            if(domain_num != op2.domain_num)
+            {
+                std::cout<<"unequal length\n";
+            }
+            for(int i = 0; i < domain_num; i++)
+            {
+                for(int j = 0; j < CATE_LENGTH_DEFAULT; j++)
+                   if(domains[i].category[j] != op2.domains[i].category[j])
+                    {
+                        std::cout<<"number :"<<i<<" line category not equal\n";
+                        return false;
+                    }
+                if(domains[i].domainLength != op2.domains[i].domainLength)
+                {
+                    std::cout<<"number :"<<i<<" line domain length not equal\n";
+                    return false;
+                }
+                if(domains[i].resolution != op2.domains[i].resolution)
+                {
+                    std::cout<<"number :"<<i<<" line resolution not equal\n";
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // save all descriptors to binary file in order to 
+        // build SLH index
+        // format:
+        // usigned int : sizeof(datatype)
+        // unsigned int : "row number" one row for one descriptor
+        // unsigned int : "descriptor length"
+        // (row number) * (descriptor length) datatype
         void saveDescriptor(std::string fileName);
 
     private:

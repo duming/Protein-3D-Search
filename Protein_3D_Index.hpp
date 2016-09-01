@@ -29,6 +29,11 @@ public:
 class Protein_3D_Index
 {
 public:
+
+    Protein_3D_Index():cdata("null")
+    {
+    }
+
     Protein_3D_Index(string fileName):cdata(fileName),lshIndex()
     {
     }
@@ -39,6 +44,17 @@ public:
     int BuildIndex();
 
 
+
+    // Only calculate the descriptors for all pdb files under dataPath directory
+    // Save the descriptors into desFileName.
+    // Generate a list file that indicate the order of the pdb files
+    void desCalculate(string dataPath, string desFileName, string listName)
+    {
+        cdata.fakeList(dataPath);
+        MultiCalGI();
+        cdata.saveDescriptor(desFileName);
+        cdata.saveList(listName);
+    }
 
     static void* PDBReader(void* ptr);
 

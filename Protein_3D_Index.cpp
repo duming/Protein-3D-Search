@@ -94,7 +94,7 @@ Consumer(void*ptr)
         //for(int i=0;i<tempPoints.size();i++)
         //    cout<<tempPoints[i]<<endl;
         //cout<<endl;
-        (*Cptr)[domain_idx].printDomain(1|2|4);
+        (*Cptr)[domain_idx].printDomain(1|2);
         pthread_mutex_unlock(TPptr->mt);
     }
     //decrease the consumer thread number 
@@ -170,7 +170,7 @@ return 1;
 
 
 
-
+/*
 void Protein_3D_Index::LSH(lshbox::Matrix<INDEX_DATA_TYPE> &data, string indexFile, int htSize)
 {
    // lshbox::kdbqLsh<INDEX_DATA_TYPE> lshIndex;
@@ -188,14 +188,14 @@ void Protein_3D_Index::LSH(lshbox::Matrix<INDEX_DATA_TYPE> &data, string indexFi
 	}
 	lshIndex.save(indexFile);
 }
-
+*/
 
 vector<pair<float, unsigned> > & DesQuery(INDEX_DATA_TYPE* des)
 {
 
 }
 
-
+/*
 int Protein_3D_Index:: BuildIndex()
 {
     // 1. load cath list file
@@ -250,26 +250,5 @@ int Protein_3D_Index:: BuildIndex()
     string indexFile = "test.index";
     LSH(data, indexPath + indexFile, hashTableSize); 
 
-/*
-    //query test
-    lshbox::Matrix<INDEX_DATA_TYPE>::Accessor accessor(data);
-    lshbox::Metric<INDEX_DATA_TYPE> metric(data.getDim(), L2_DIST);
-    unsigned K = 50;
-    lshbox::Scanner<lshbox::Matrix<INDEX_DATA_TYPE>::Accessor> scanner(
-                accessor,
-                metric,
-                K
-    );
-    scanner.reset(data[0]);
-    lshIndex.query(data[0], scanner);
-    lshbox::Topk & result = scanner.topk();    
-    result.genTopk();
-    std::vector<std::pair<float, unsigned> > &tops
-        =result.getTopk();
-
-
-    for(int i=0; i < tops.size(); i++)
-        cout<<tops[i].first<<","<<tops[i].second<<endl;
-*/
 	return 0;
-}
+}*/

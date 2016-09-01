@@ -6,9 +6,10 @@
 #include "GaussIntegral.hpp"
 #include <time.h>
 #include <unistd.h>
-#include "lshbox/lshbox.h"
-#include "Protein_search_engine.hpp"
+//#include "lshbox/lshbox.h"
+//#include "Protein_search_engine.hpp"
 #include "Eigen/dense"
+#include <unordered_map>
 
 using namespace std;
 ///////////////////////////////////
@@ -234,7 +235,7 @@ void DescriptorSavingTest()
     
 }
 
-
+/*
 void lshtest()
 {
     typedef double DATATYPE;
@@ -268,12 +269,38 @@ void lshtest()
 	std::cout << "CONSTRUCTING TIME: " << timer.elapsed() << "s." << std::endl;
 	std::cout << "LOADING BENCHMARK ..." << std::endl;
 }
+*/
 
 
-int main()
+
+// usage:
+// 1.  "des" dataPath descriptorFile listFile
+void commandLine(int argc, const char * argv[])
 {
-    string ss("123  333 44 55");
+    if(argc == 1)
+        return;
+
+    if(strcmp(argv[1], "des") == 0)
+    {//calculate descriptor only
+        if(argc != 5)
+            return;
+        string dataPath(argv[2]);
+        string desFileName(argv[3]);
+        string listFileName(argv[4]);
+
+        //cout<<dataPath<<'\n'<<desFileName<<'\n'<<listFileName<<'\n'<<endl;
+        Protein_3D_Index p3d;
+        p3d.desCalculate(dataPath, desFileName, listFileName);
+    }
+}
+
+
+int main(int argc, const char * argv[])
+{
+    commandLine(argc, argv);
+
 /*
+    string ss("123  333 44 55");
     const char *s1 = "123456";
     char s4[] = "123 : 333 44 5";
 
@@ -336,12 +363,13 @@ int main()
     lshbox::timer timer;
     lshbox::Matrix<DATATYPE> data("test.data");
 */
-   Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
-   P3DIdx.BuildIndex();
+//   Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+//   P3DIdx.BuildIndex();
 
-
+/*
     lshbox::Matrix<double> data("index/descriptors.data");
 
+    Index_query idq(20, data, "index/test.index");
 
     {
     int hit = 0;
@@ -349,27 +377,32 @@ int main()
     {
         //Index_query idq(20, data, P3DIdx.getIndex());
 
-        Index_query idq(20, data, "index/test.index");
 
        // cout<<(idq.getIndex() == P3DIdx.getIndex())<<endl;
 
         vector<pair<float, unsigned> > result;
         vector<pair<float, unsigned> >::iterator it;
  
+        cout<<"query:"<<j<<endl;
         idq.desQuery(result, data[j]);
         it = find(result.begin(),result.end(), pair<float, unsigned>(0,j));
         if(it != result.end())
             hit++;
-
-        for(int i=0; i < result.size(); i++)
+//        else
         {
-            cout<<result[i].first<<","<<result[i].second<<endl;
+            for(int i=0; i < result.size(); i++)
+            {
+                cout<<result[i].first<<","<<result[i].second<<endl;
+            }
         }
         cout<<endl;
     }
 
     cout<<(float)hit/data.getSize()<<endl;
     }
+*/
+
+
 
 
 /*
@@ -427,6 +460,29 @@ int main()
 
     cout<<(m -m2).norm()<<endl;
     */
+
+
+    /*
+    //index test
+    typedef pair<int, float> data;
+	std::unordered_map<bitset<64>,data> map;
+    bitset<64> bit[3];
+    bit[0].set(0);
+    bit[1].set(1);
+    bit[2].set(2);
+    data dt[3];
+    dt[0].first = 0;
+    dt[1].first = 1;
+    dt[2].first = 2;
+    map[bit[0]] = dt[0];
+    map[bit[1]] = dt[1];
+    map[bit[2]] = dt[2];
+	auto range = map.equal_range(bit[0]);
+	std::cout<<map.count(1)<<'\n';
+	for (auto it = range.first; it != range.second; ++it) {
+    	std::cout << it->first << ' ' << it->second.first << '\n';
+	}
+	*/
     return 0;
 }
 

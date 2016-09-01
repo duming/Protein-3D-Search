@@ -109,6 +109,7 @@ int CathData:: readList()
         if(tokens.size() != 12)
         {
             cout<<"CLF format error"<<endl;
+            infile.close();
             return 0;
         }
         
@@ -127,7 +128,38 @@ int CathData:: readList()
     }
     domain_num = domains.size();
 
+    infile.close();
     return domain_num;
+}
+
+
+int CathData::saveList(string fileName)
+{
+    ofstream outfile(fileName);
+    if(!outfile.is_open())
+    {
+        cout<<"error opening file: "<<listFileName<<endl;
+        return false;
+    }
+
+    string whiteSpaces(4,' ');
+    for(int i = 0; i < domain_num; i++)
+    {
+        //the name
+        outfile<<domains[i].domainName<<whiteSpaces;
+        //category numbers
+        for(int j = 0; j < CATE_LENGTH_DEFAULT; j++)
+            outfile<<domains[i].category[j]<<whiteSpaces;
+        //domain length
+        outfile<<domains[i].domainLength<<whiteSpaces;
+        //resolution
+        outfile<<domains[i].resolution;
+        outfile<<endl;
+    }
+
+    outfile.close();
+
+    return 1;
 }
 
 
@@ -188,6 +220,7 @@ void CathData::saveDescriptor(string fileName)
 
 void CathData:: test()
 {
+    /*
     readList();
     string fileName = dataPath + domainPath + domains[0].domainName;
     cout<<fileName<<endl;
@@ -200,5 +233,12 @@ void CathData:: test()
 
     for(int i=0; i< temp.size(); i++)
         cout<<i<<':'<<temp[i].x<<"\t\t"<<temp[i].y<<"\t\t"<<temp[i].z<<endl;
+    */
+    string fileName =  "test.cathlist";
+    readList();
+    saveList(dataPath + fileName);
+    CathData c1(fileName);
+    c1.readList();
+    cout<<(c1 == *this)<<endl;
 
 }

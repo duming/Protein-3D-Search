@@ -21,6 +21,20 @@
 /// @author Yang Long, Gefu Tang & Zhifeng Xiao
 /// @date 2015.6.30
 //////////////////////////////////////////////////////////////////////////////
+/// Modified by Ming Du 
+//  Aug.30 2016
+/// This modification intends to deal with following issues:
+//  1. The original version combined the LSH and K-means double bit quantizatoin 
+//     which lost the advantages of K-means double bit quantization.
+//     In this modification, there will be only the K-means double bit
+//  2. There are lot of code redundancy, and some function overlape with each other.
+//  3. The matrix operation provided by the Eigen library are not fully exploit by
+//     the previous code. There are redundant data structure and incorrect matrix 
+//     multiplication.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
 
 /**
  * @file kdbqlsh.h
@@ -121,7 +135,7 @@ public:
      */
     void save(const std::string &file);
 
-
+/*
     //for debug
     bool operator ==(const kdbqLsh<DATATYPE> & op2) const
     {
@@ -194,21 +208,38 @@ public:
 
         return ret;
     }
+*/
+    void printTable()
+    {
+        for(int i=0; i < param.L; i++)
+        {
+            std::cout<<"table:"<<i<<std::endl;
+            int sum=0;
+            for( std::map<unsigned, std::vector<unsigned> >::iterator it = tables[i].begin();
+                    it != tables[i].end(); ++it)
+            {
+                std::cout<<"hash value:"<<it->first<<std::endl;
+                int tableSize = it->second.size();
+                sum += tableSize;
+                for(int j=0; j < tableSize; j++)
+                    std::cout<<it->second[j]<<' ';
+                std::cout<<std::endl;
+            }
+            std::cout<<sum<<std::endl<<std::endl;
+        }
+    }
 
 private:
     Parameter param;
-    std::vector<std::vector<std::vector<float> > >  pcsAll;
-    std::vector<std::vector<std::vector<float> > >  omegasAll;
-    std::vector<std::vector<unsigned> > rndArray;
+   // std::vector<Eigen::matrixXf>  pcsAll;
+   // std::vector<Eigen::matrixXf>  omegasAll;
     std::vector<std::map<unsigned, std::vector<unsigned> > > tables;
-    Eigen::VectorXf prjColMean;
-    std::vector<std::vector<std::vector<std::pair<float, unsigned> > > > prjArray;
-    std::vector<std::vector<std::vector<std::vector<std::pair<float, unsigned> > > > > S;
     Eigen::MatrixXf u0, u1, u2;
     Eigen::MatrixXf X;
 };
 }
 
+/*
 // ------------------------- implementation -------------------------
 template<typename DATATYPE>
 void lshbox::kdbqLsh<DATATYPE>::reset(const Parameter &param_)
@@ -514,7 +545,7 @@ void lshbox::kdbqLsh<DATATYPE>::query(const DATATYPE *domin, SCANNER &scanner)
 
         }
         unsigned hashVal = sum % param.M;
-        //std::cout<<"hash:"<<hashVal<<'\t'<<sum<<std::endl;
+        std::cout<<"hash:"<<hashVal<<std::endl;
         if (tables[k].find(hashVal) != tables[k].end())
         {
             //std::cout<<k<<std::endl;
@@ -576,8 +607,8 @@ void lshbox::kdbqLsh<DATATYPE>::load(const std::string &file)
     }
     in.close();
 
-
-   
+    //for test
+    printTable(); 
 }
 template<typename DATATYPE>
 void lshbox::kdbqLsh<DATATYPE>::save(const std::string &file)
@@ -619,3 +650,4 @@ void lshbox::kdbqLsh<DATATYPE>::save(const std::string &file)
     }
     out.close();
 }
+*/
