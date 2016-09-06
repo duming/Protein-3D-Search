@@ -54,7 +54,7 @@ bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)
     ifstream infile(fileName);
     if(!infile.is_open())
     {
-        cout<<"error opening file: "<<fileName<<endl;
+        cout<<"readPDB: error opening file: "<<fileName<<endl;
         return false;
     }
     //setbuffer
@@ -92,7 +92,7 @@ int CathData:: readList()
     ifstream infile(dataPath + listFileName);
     if(!infile.is_open())
     {
-        cout<<"error opening file: "<<listFileName<<endl;
+        cout<<"readList error opening file: "<<listFileName<<endl;
         return false;
     }
 
@@ -216,6 +216,18 @@ void CathData::saveDescriptor(string fileName)
     //close file
     outfile.close();
 
+}
+
+void CathData::saveDescriptorText(string fileName)
+{
+    ofstream outfile(fileName);
+    for(int i = 0; i < domains.size(); i++)
+    {
+        outfile<<domains[i].domainName<<' ';
+        for(int j = 0; j < DESCRIPTOR_LENGTH; j++)
+            outfile<<domains[i].descriptor[j]<<' ';
+        outfile<<endl;
+    }
 }
 
 

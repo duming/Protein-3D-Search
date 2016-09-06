@@ -175,6 +175,9 @@ class CathData
         // (row number) * (descriptor length) datatype
         void saveDescriptor(std::string fileName);
 
+
+        void saveDescriptorText(std::string fileName);
+
     private:
         static char*inputBuff;
 

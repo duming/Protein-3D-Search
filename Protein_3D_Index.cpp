@@ -81,8 +81,8 @@ Consumer(void*ptr)
         //end of reading
        
         //processing data
-        gi.setProtein(&tempPoints);
-        gi.GaussAll((*Cptr)[domain_idx].descriptor); 
+        //gi.setProtein(&tempPoints);
+        //gi.GaussAll((*Cptr)[domain_idx].descriptor); 
 
 
 

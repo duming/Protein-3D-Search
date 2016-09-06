@@ -56,12 +56,13 @@ public:
             return;
         }
     
-        cdata.printDomains();
+        //cdata.printDomains();
 
-        //cdata.setPath(dataPath,"");
-        //MultiCalGI();
+        cdata.setPath(dataPath,"");
+        MultiCalGI();
         //cdata.saveDescriptor(desFileName);
-        //cdata.saveList(listName);
+        cdata.saveDescriptorText(desFileName);
+        cdata.saveList(listName);
     }
 
     static void* PDBReader(void* ptr);
