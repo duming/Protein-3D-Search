@@ -5,10 +5,10 @@
 #include <string.h>
 #include <iomanip>
 using namespace std;
-string CathData::dataPath = DATAPATH;
-string CathData::domainPath = DOMAINPATH;
-string Cathdomain::dataPath = DATAPATH;
-string Cathdomain::domainPath = DOMAINPATH;
+//string CathData::dataPath = DATAPATH;
+//string CathData::domainPath = DOMAINPATH;
+//string Cathdomain::dataPath = DATAPATH;
+//string Cathdomain::domainPath = DOMAINPATH;
 
 char* Cathdomain:: inputBuff = new char[BUFFLENGTH];
 char* CathData:: inputBuff = new char[BUFFLENGTH];
@@ -71,7 +71,8 @@ bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)
         //Utility::split(tokens, line);
         sscanf(line,"%4c",name);
         sscanf(line+22,"%4i",&resSeq);
-        
+            
+        name[4] = '\0';
         if( strcmp(name, "ATOM") || line[13]!= 'C' || line[14] != 'A'||resSeq == lastResSeq)
             continue;
       
@@ -82,6 +83,7 @@ bool Cathdomain:: readPDB(string fileName, vector<POINT> &coords)
         coords.push_back(tempP);
     }
 
+    infile.close();
     return true;
 }
 

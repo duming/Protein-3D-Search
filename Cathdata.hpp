@@ -27,9 +27,9 @@ class Cathdomain
         //store all C-alpha coordinates to variable coords
         static bool readPDB( std:: string fileName, std::vector<POINT> &coords);
 
-        inline bool readPDB(std::vector<POINT> &coords)
+        inline bool readPDB(std::vector<POINT> &coords, std::string path)
         {
-            return readPDB(dataPath + domainPath + domainName, coords);
+            return readPDB(path + domainName, coords);
         }
 
 
@@ -67,8 +67,8 @@ class Cathdomain
         //the structure resolution (999.000 for NMR and 1000 for obsolete PDB entries)
         double resolution;
 
-        static std::string dataPath;
-        static std::string domainPath;
+        //static std::string dataPath;
+        //static std::string domainPath;
 
 
         friend class CathData;
@@ -86,6 +86,11 @@ class CathData
         ~CathData()
         {}
 
+        void setPath(std::string data_Path,std::string domain_Path)
+        {
+            dataPath = data_Path;
+            domainPath = domain_Path;
+        }
       
         // read cathList file and return the length of the list
         int readList();
@@ -108,6 +113,11 @@ class CathData
             return domains[idx];
         }
 
+
+        bool readPDB(int i, std::vector<POINT> &coords)
+        {
+            return domains[i].readPDB(dataPath + domainPath + domains[i].domainName, coords);
+        }
 
         void printDomains(int start = 0, int end = -1, int option= 1|2)
         {
@@ -168,8 +178,8 @@ class CathData
         int domain_num;
         std::string listFileName;
 
-        static std::string dataPath;
-        static std::string domainPath;
+        std::string dataPath;
+        std::string domainPath;
 
 };
 
