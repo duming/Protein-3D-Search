@@ -24,7 +24,7 @@ PDBReader(void* ptr)
     for(int i = start; i<=end ; i++)
     {
         //read from pdb file
-        if(!(*Cptr)[i].readPDB(tempPoints))
+        if(!Cptr->readPDB(i,tempPoints))
             continue;
         // write them into buffer 
         Buf_Unit_Points& Unit = Pptr->RWBuf->startWrite();
@@ -91,9 +91,9 @@ Consumer(void*ptr)
         tid = pthread_self();
         pthread_mutex_lock(TPptr->mt);
         cout<<tid<<":read "<<endl;
-        //for(int i=0;i<tempPoints.size();i++)
-        //    cout<<tempPoints[i]<<endl;
-        //cout<<endl;
+       // for(int i=0;i<tempPoints.size();i++)
+       //     cout<<tempPoints[i]<<endl;
+       // cout<<endl;
         (*Cptr)[domain_idx].printDomain(1|2);
         pthread_mutex_unlock(TPptr->mt);
     }
@@ -195,12 +195,13 @@ vector<pair<float, unsigned> > & DesQuery(INDEX_DATA_TYPE* des)
 
 }
 
-/*
+
 int Protein_3D_Index:: BuildIndex()
 {
     // 1. load cath list file
     //cdata.readList();
     cdata.fakeList("data/testpdb");
+    cdata.setPath("data/testpdb/","");
 //    cdata.printDomains(0,99);
 
     // 2. calculate GI
@@ -222,8 +223,8 @@ int Protein_3D_Index:: BuildIndex()
     cout<<millis2-millis1<<endl;
 
 
-    //cdata.printDomains(0,-1,1|2|4);
-
+    cdata.printDomains(0,-1,1|2|4);
+/*
     // 3. construct the index according to the Gauss Integral
 
     //save Descriptors in binary file
@@ -249,6 +250,6 @@ int Protein_3D_Index:: BuildIndex()
     int hashTableSize = 500;
     string indexFile = "test.index";
     LSH(data, indexPath + indexFile, hashTableSize); 
-
+*/
 	return 0;
-}*/
+}

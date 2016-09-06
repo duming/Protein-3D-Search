@@ -33,6 +33,10 @@ class Cathdomain
         }
 
 
+        std::string getName()
+        {
+            return domainName;
+        }
     
 
         void printDomain(int option);

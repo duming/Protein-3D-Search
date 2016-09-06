@@ -50,10 +50,18 @@ public:
     // Generate a list file that indicate the order of the pdb files
     void desCalculate(string dataPath, string desFileName, string listName)
     {
-        cdata.fakeList(dataPath);
-        MultiCalGI();
-        cdata.saveDescriptor(desFileName);
-        cdata.saveList(listName);
+        if(cdata.fakeList(dataPath) == 0)
+        {
+            cout<<"desCalculate\n"<<"directory: "<<dataPath<<" dosen't exist"<<endl;
+            return;
+        }
+    
+        cdata.printDomains();
+
+        //cdata.setPath(dataPath,"");
+        //MultiCalGI();
+        //cdata.saveDescriptor(desFileName);
+        //cdata.saveList(listName);
     }
 
     static void* PDBReader(void* ptr);

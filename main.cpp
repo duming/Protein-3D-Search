@@ -11,6 +11,8 @@
 #include "Eigen/dense"
 #include <unordered_map>
 
+#include "benchMark.hpp"
+
 using namespace std;
 ///////////////////////////////////
 //        semaphore test
@@ -363,8 +365,10 @@ int main(int argc, const char * argv[])
     lshbox::timer timer;
     lshbox::Matrix<DATATYPE> data("test.data");
 */
-//   Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
-//   P3DIdx.BuildIndex();
+
+
+//    Protein_3D_Index P3DIdx("CathDomainList.v4.0.0.txt");
+//    P3DIdx.BuildIndex();
 
 /*
     lshbox::Matrix<double> data("index/descriptors.data");
@@ -483,6 +487,27 @@ int main(int argc, const char * argv[])
     	std::cout << it->first << ' ' << it->second.first << '\n';
 	}
 	*/
+
+    benchMark bm;
+    bm.setParas("data/casp11/native_domain/"                 // target
+                ,"data/casp11/prediction_domain/"            // prediction
+                ,"data/casp11/result_domain/"          // result
+                ,"data/casp11/domain_definitions.txt"              // domain_definition
+                ,"data/casp11/output/"
+            );
+
+   // bm.split_to_domain("data/casp11/domain_definitions.txt"
+   //                     ,"data/casp11/AllTargets/"
+   //                     ,"data/casp11/native_domain/" );
+
+    bm.DescriptorTest();
+
+    //vector<string> pdbdata;
+    //Utility::readPDB("data/casp11/natives/T0759.pdb",pdbdata);
+    //Utility::writePDB("data/casp11/output/T0759.pdb",pdbdata, 12,30);
+
+
+
     return 0;
 }
 

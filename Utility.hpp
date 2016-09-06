@@ -187,6 +187,19 @@ class Utility
     static bool listFiles(std::string directory, std::vector<std::string> & files, bool isFile = true);
 
 
+
+    // read a pdb file 
+    // read all ATOM line in pdb file
+    // save each line to a string vector
+    static void readPDB(std::string fileName , std::vector<std::string> & data);
+
+    //save the pdb data to disk
+    //by default it will save the whole file
+    //otherwise it will save the part from residue start to residue end
+    static void writePDB(std::string fileName, std::vector<std::string> & data, int start = 1, int end = -1);
+
+
+
     //vector length
     static double vectLen(POINT const &op);
 

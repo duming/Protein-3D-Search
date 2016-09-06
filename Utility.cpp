@@ -77,6 +77,53 @@ Utility:: listFiles(std::string dir, std::vector<std::string> &files, bool isFil
 
 
 
+void  Utility:: readPDB(std::string fileName, std::vector<std::string> & data)
+{
+    std::ifstream infile(fileName);
+    if(!infile.is_open())
+    {
+        std::cout<<"error opening file: "<<fileName<<std::endl;
+        return ;
+    }
+    //setbuffer
+    int LINELENGTH = 500;
+
+    //read the file
+    char line[LINELENGTH];
+    char name[5];
+    data.resize(0);
+
+    while(infile.getline(line, LINELENGTH))
+    {
+        //Utility::split(tokens, line);
+        sscanf(line,"%4c",name);
+        
+        if( strcmp(name, "ATOM") )
+            continue;
+      
+        data.push_back(std::string(line));   
+    }
+    infile.close();
+}
+
+
+void Utility:: writePDB(std::string fileName, std::vector<std::string> & data, int start, int end)
+{
+    std::ofstream outfile(fileName);
+    int resSeq;
+    if(end == -1)
+        end = data.size();
+    for(int i = 0; i < data.size(); i++)
+    {
+        sscanf(data[i].c_str()+22,"%4i",&resSeq);
+        if(resSeq >= start && resSeq <=end)
+            outfile<<data[i]<<'\n';
+    }
+    outfile.close();
+}
+
+
+
 ////////////////////////////////////
 //    vector operation
 ///////////////////////////////////
