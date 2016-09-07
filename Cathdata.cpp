@@ -140,7 +140,7 @@ int CathData::saveList(string fileName)
     ofstream outfile(fileName);
     if(!outfile.is_open())
     {
-        cout<<"error opening file: "<<listFileName<<endl;
+        cout<<"saveList error opening file: "<<fileName<<endl;
         return false;
     }
 
@@ -174,6 +174,8 @@ int CathData::fakeList(string directory)
     Cathdomain tempd;
     for(int i = 0; i < fileList.size(); i++)
     {
+        if(fileList[i][0] =='.')
+            continue;
         tempd.domainName = fileList[i];
         domains.push_back(tempd);
     }
@@ -196,6 +198,13 @@ void CathData::printData(int option)
 void CathData::saveDescriptor(string fileName)
 {
     ofstream outfile(fileName, ofstream::binary);
+
+    if(!outfile)
+    {
+        cout<<"saveDescripor error saving:"<<fileName<<endl;
+        return;
+    }
+
     unsigned dataheader[3];
     //output the size of data type
     dataheader[0] = (unsigned)sizeof(double);
