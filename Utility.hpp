@@ -191,13 +191,19 @@ class Utility
     // read a pdb file 
     // read all ATOM line in pdb file
     // save each line to a string vector
-    static void readPDB(std::string fileName , std::vector<std::string> & data);
+    static bool readPDB(std::string fileName , std::vector<std::string> & data);
 
-    //save the pdb data to disk
-    //by default it will save the whole file
-    //otherwise it will save the part from residue start to residue end
+    // save the pdb data to disk
+    // by default it will save the whole file
+    // otherwise it will save the part from residue start to residue end
     static void writePDB(std::string fileName, std::vector<std::string> & data, int start = 1, int end = -1);
 
+    // read a txt file save each line in line vector data
+    static bool readFile(std::string fileName, std::vector<std::string> & data);
+
+    // delete all characters after last '.'
+    // if there is no '.' in string, string remain unchanged
+    static std::string removeSuff(std::string str);
 
 
     //vector length

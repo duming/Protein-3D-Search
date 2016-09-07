@@ -77,13 +77,13 @@ Utility:: listFiles(std::string dir, std::vector<std::string> &files, bool isFil
 
 
 
-void  Utility:: readPDB(std::string fileName, std::vector<std::string> & data)
+bool  Utility:: readPDB(std::string fileName, std::vector<std::string> & data)
 {
     std::ifstream infile(fileName);
     if(!infile.is_open())
     {
         std::cout<<"error opening file: "<<fileName<<std::endl;
-        return ;
+        return false;
     }
     //setbuffer
     int LINELENGTH = 500;
@@ -104,6 +104,32 @@ void  Utility:: readPDB(std::string fileName, std::vector<std::string> & data)
         data.push_back(std::string(line));   
     }
     infile.close();
+    return true;
+}
+
+
+bool  Utility:: readFile(std::string fileName, std::vector<std::string> & data)
+{
+    std::ifstream infile(fileName);
+    if(!infile.is_open())
+    {
+        std::cout<<"error opening file: "<<fileName<<std::endl;
+        return false;
+    }
+    //setbuffer
+    int LINELENGTH = 500;
+
+    //read the file
+    char line[LINELENGTH];
+    char name[5];
+    data.resize(0);
+
+    while(infile.getline(line, LINELENGTH))
+    {
+        data.push_back(std::string(line));   
+    }
+    infile.close();
+    return true;
 }
 
 
@@ -122,6 +148,11 @@ void Utility:: writePDB(std::string fileName, std::vector<std::string> & data, i
     outfile.close();
 }
 
+
+std::string Utility:: removeSuff(std::string str)
+{
+    return str.substr(0, str.find_last_of("."));
+}
 
 
 ////////////////////////////////////
