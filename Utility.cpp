@@ -236,6 +236,11 @@ double Utility::vectDot(POINT const &op1, POINT const &op2)
 void Utility::vectUnit(POINT &result, point const & op)
 {   
     double len = vectLen(op);
+    if(len == 0)
+    {//if the input is a zero vector return itself
+        result = op;
+        return;
+    }
     result.x = op.x/len;
     result.y = op.y/len;
     result.z = op.z/len;
