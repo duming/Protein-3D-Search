@@ -201,9 +201,39 @@ class Utility
     // read a txt file save each line in line vector data
     static bool readFile(std::string fileName, std::vector<std::string> & data);
 
+    // write a string vector to file
+    // each unit in the vector is a line 
+    static bool writeFile(std::string fileName, std::vector<std::string> & data);
+
     // delete all characters after last '.'
     // if there is no '.' in string, string remain unchanged
     static std::string removeSuff(std::string str);
+
+
+    static bool readTable(std::string fileName
+                , std::vector<std::vector<std::string> >&data
+                , std::vector<std::string> colum_names);
+
+
+   
+
+    template<class T>
+    static double l1_norm(T* op1, T* op2, int length)
+    {
+        double sum = 0;
+        for(int i=0; i < length; i++)
+            sum += fabs(op1[i] - op2[i]);
+        return sum;
+    }
+
+    template<class T>
+    static double l2_norm(T* op1, T* op2, int length)
+    {
+        double sum = 0;
+        for(int i=0; i < length; i++)
+            sum += pow((op1[i] - op2[i]),2);
+        return sqrt(sum);
+    }
 
 
     //vector length
@@ -225,7 +255,6 @@ class Utility
 
     // significant digits
     static double round_to_digits(double value, int digits);
-        
 
 
     //read gauss integral reasult from the original GI.c program

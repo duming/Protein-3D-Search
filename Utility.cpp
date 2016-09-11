@@ -1,5 +1,7 @@
 #include "Utility.hpp"
 
+using namespace std;
+
 std::ostream& operator <<(std::ostream& os, point & pt)
 {
     os<<pt.x<<" "<<pt.y<<" "<<pt.z;
@@ -133,6 +135,24 @@ bool  Utility:: readFile(std::string fileName, std::vector<std::string> & data)
 }
 
 
+
+bool Utility::writeFile(string fileName, vector<string> & data)
+{
+    std::ofstream outfile(fileName);
+    if(!outfile.is_open())
+    {
+        std::cout<<"error writing file: "<<fileName<<std::endl;
+        return false;
+    }
+
+    for(int i=0; i < data.size(); i++)
+        outfile<<data[i]<<'\n';
+    outfile.close();
+    return true;
+}
+
+
+
 void Utility:: writePDB(std::string fileName, std::vector<std::string> & data, int start, int end)
 {
     std::ofstream outfile(fileName);
@@ -153,6 +173,48 @@ std::string Utility:: removeSuff(std::string str)
 {
     return str.substr(0, str.find_last_of("."));
 }
+
+
+bool Utility:: readTable(string fileName, vector<vector<string> >&dists, vector<string> colum_names)
+{
+    vector<string> data_str;
+    if(!Utility::readFile(fileName, data_str))
+        return false;
+    int Pos[colum_names.size()];
+
+    // search file header
+    vector<string> header = Utility::split(data_str[0],' ');  
+    for(int i=0; i < colum_names.size(); i++)
+    {
+        Pos[i] = find(header.begin(), header.end(), colum_names[i]) - header.begin();
+        if(Pos[i] >= header.size())
+        {
+            cout<<"readDist: can't find: "<<colum_names[i]<<"in header"<<endl;
+            return false;
+        }
+        //cout<<Pos[i]<<' ';
+    }
+    //cout<<endl;
+
+    //fetch colum we want
+    vector<string> row,row_data;
+    dists.resize(0);
+    for(int i=1; i < data_str.size(); i++)
+    {
+        if(data_str[i].length() == 0)
+            continue;
+        row = Utility::split(data_str[i], ' ');
+        row_data.resize(0);
+        for(int j = 0; j < colum_names.size(); j++)
+            row_data.push_back(row[Pos[j]]);
+        dists.push_back(row_data); 
+    }
+    return true;    
+}
+
+
+
+
 
 
 ////////////////////////////////////
