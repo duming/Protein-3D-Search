@@ -191,7 +191,7 @@ class Utility
     // read a pdb file 
     // read all ATOM line in pdb file
     // save each line to a string vector
-    static bool readPDB(std::string fileName , std::vector<std::string> & data);
+    static bool readPDB(std::string fileName , std::vector<std::string> & data, bool ca_only = true);
 
     // save the pdb data to disk
     // by default it will save the whole file
@@ -215,7 +215,17 @@ class Utility
                 , std::vector<std::string> colum_names);
 
 
-   
+
+    // return the first residue in a pdb line vector
+    static int firstRes(std::vector<std::string> & dataPDB);
+
+    // return the last residue in the pdb line vector
+    static int lastRes(std::vector<std::string> & dataPDB);
+
+
+    // split pdb data into segments each segment contains segLen residues
+    static void splitPDB(std::vector<std::string> & dataPDB
+            , std::vector<std::vector<std::string> >& segs, int segLen);
 
     template<class T>
     static double l1_norm(T* op1, T* op2, int length)
@@ -223,7 +233,7 @@ class Utility
         double sum = 0;
         for(int i=0; i < length; i++)
             sum += fabs(op1[i] - op2[i]);
-        return sum;
+        return sum/length;
     }
 
     template<class T>
@@ -232,7 +242,7 @@ class Utility
         double sum = 0;
         for(int i=0; i < length; i++)
             sum += pow((op1[i] - op2[i]),2);
-        return sqrt(sum);
+        return sqrt(sum)/length;
     }
 
 

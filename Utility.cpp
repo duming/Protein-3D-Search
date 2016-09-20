@@ -79,7 +79,7 @@ Utility:: listFiles(std::string dir, std::vector<std::string> &files, bool isFil
 
 
 
-bool  Utility:: readPDB(std::string fileName, std::vector<std::string> & data)
+bool  Utility:: readPDB(std::string fileName, std::vector<std::string> & data, bool ca_only)
 {
     std::ifstream infile(fileName);
     if(!infile.is_open())
@@ -101,6 +101,9 @@ bool  Utility:: readPDB(std::string fileName, std::vector<std::string> & data)
         sscanf(line,"%4c",name);
         
         if( strcmp(name, "ATOM") )
+            continue;
+
+        if(ca_only && !(line[13] =='C' && line[14] =='A'))
             continue;
       
         data.push_back(std::string(line));   
@@ -149,6 +152,62 @@ bool Utility::writeFile(string fileName, vector<string> & data)
         outfile<<data[i]<<'\n';
     outfile.close();
     return true;
+}
+
+
+
+
+int Utility::firstRes(vector<string>& dataPDB)
+{
+    if(dataPDB.size() == 0)
+        return 0;
+    int resnum;
+    sscanf(dataPDB.front().c_str()+22, "%4i", &resnum);
+    return resnum;
+}
+
+int Utility::lastRes(vector<string>& dataPDB)
+{
+    if(dataPDB.size() == 0)
+        return 0;
+
+    int resnum;
+    sscanf(dataPDB.back().c_str()+22, "%4i", &resnum);
+    return resnum;
+}
+
+
+
+
+
+void Utility::splitPDB(vector<string> & dataPDB, vector<vector<string> > & segs, int segLen)
+{
+    int segNum = 0;
+    int curRes, lastRes;
+    lastRes = Utility::firstRes(dataPDB);
+    segs.resize(0);
+    segs.resize(1);
+    int resCount = 0;
+    for(int i=0; i < dataPDB.size(); i++)
+    {
+        sscanf(dataPDB[i].c_str()+22,"%4i",&curRes); 
+        if(curRes != lastRes)
+        {
+            resCount++;
+            if(resCount >= segLen)
+            {
+                resCount = 0;
+                segs.push_back(vector<string>());
+
+            }
+            lastRes = curRes;
+        }
+        segs.back().push_back(dataPDB[i]);
+        
+    }
+    if(resCount < segLen )
+        segs.pop_back();
+
 }
 
 
