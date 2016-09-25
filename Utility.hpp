@@ -193,6 +193,14 @@ class Utility
     // save each line to a string vector
     static bool readPDB(std::string fileName , std::vector<std::string> & data, bool ca_only = true);
 
+
+
+    // convert PDB line vector into POINT vector
+    //
+    static void PDB_to_POINT(std::vector<std::string> & data, std::vector<POINT> & vp);
+
+
+
     // save the pdb data to disk
     // by default it will save the whole file
     // otherwise it will save the part from residue start to residue end
