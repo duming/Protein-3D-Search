@@ -90,11 +90,11 @@ Consumer(void*ptr)
         pthread_t tid;
         tid = pthread_self();
         pthread_mutex_lock(TPptr->mt);
-        cout<<tid<<":read "<<endl;
+        cout<<tid<<":read " << tempPoints.size()<<endl;
        // for(int i=0;i<tempPoints.size();i++)
        //     cout<<tempPoints[i]<<endl;
        // cout<<endl;
-        (*Cptr)[domain_idx].printDomain(1|2);
+        (*Cptr)[domain_idx].printDomain(1|2|4);
         pthread_mutex_unlock(TPptr->mt);
     }
     //decrease the consumer thread number 
@@ -223,7 +223,7 @@ int Protein_3D_Index:: BuildIndex()
     cout<<millis2-millis1<<endl;
 
 
-    cdata.printDomains(0,-1,1|2|4);
+    cdata.printDomains(0,-1,1|2);
 /*
     // 3. construct the index according to the Gauss Integral
 

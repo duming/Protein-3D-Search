@@ -69,7 +69,7 @@ void GaussIntegral::test()
     //array speed test
 
     //correctness test
-    string path = "data/testpdb/";
+    string path = "data/UnitTestpdb/";
     vector<string> files;
     Utility::listFiles(path,files);
 
@@ -113,6 +113,10 @@ void GaussIntegral::test()
         //cout<<"calculating GI"<<endl;
         setProtein(&crdPtr[i]);
         GaussAll(dscrpt[i]);
+        for(int j=0; j < DESCRIPTOR_LENGTH; j++)
+            cout<<dscrpt[i][j]<<'\t';
+        cout<<'\n'<<endl;
+        
     }
     t2 = clock();
     cout<<1000*(t2 -t1)/CLOCKS_PER_SEC<<endl;
@@ -667,7 +671,7 @@ void GaussIntegral::GaussAll(double* gptr)
     createUnitVector();
    
 
-//    unitvector.printArry();
+//    printArray(unitvector, proteinLen);
     
     createomega();
 //    omega.printArry();

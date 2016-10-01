@@ -18,6 +18,12 @@ struct point
     double x;
     double y;
     double z;
+
+    // test if the two points have a distance greater than 3.8 angstroms
+    static bool isTooFar( point & p1,  point & p2);
+
+    // return the distance between two points
+    static double dist(point & p1, point& p2);
 }POINT;
 
 std::ostream& operator <<(std::ostream& os, point & pt);
@@ -200,6 +206,10 @@ class Utility
     static void PDB_to_POINT(std::vector<std::string> & data, std::vector<POINT> & vp);
 
 
+    // return the next position in th cords where cords[i] and cords[i+1] have a dostance > 3.8 Angstroms 
+    // if there isn't a gap return 0
+    static int next_Gap(std::vector<POINT> & cords);
+    
 
     // save the pdb data to disk
     // by default it will save the whole file
@@ -215,7 +225,7 @@ class Utility
 
     // delete all characters after last '.'
     // if there is no '.' in string, string remain unchanged
-    static std::string removeSuff(std::string str);
+    static std::string removeSuff(const std::string & str);
 
 
     static bool readTable(std::string fileName

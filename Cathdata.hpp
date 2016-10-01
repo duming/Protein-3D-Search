@@ -8,7 +8,7 @@
 #define CATE_LENGTH_DEFAULT 9
 #define DESCRIPTOR_LENGTH 30
 #define BUFFLENGTH 4096
-#define LINELENGTH 128
+#define LINELENGTH 512
 
 #define DATAPATH "data/"
 #define DOMAINPATH "dompdb/"

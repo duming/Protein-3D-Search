@@ -2,6 +2,25 @@
 
 using namespace std;
 
+
+bool POINT::isTooFar(POINT & p1, POINT & p2)
+{   
+
+    if(dist(p1,p2) > 6.0)
+        return true;
+    return false;
+}
+
+
+ double POINT::dist(POINT &p1, POINT & p2)
+{
+    double dx = p1.x - p2.x;
+    double dy = p1.y - p2.y;
+    double dz = p1.z - p2.z;
+    return sqrt(dx*dx + dy*dy + dz*dz);
+}
+
+
 std::ostream& operator <<(std::ostream& os, point & pt)
 {
     os<<pt.x<<" "<<pt.y<<" "<<pt.z;
@@ -114,6 +133,17 @@ bool  Utility:: readPDB(std::string fileName, std::vector<std::string> & data, b
 
 
 
+int Utility::next_Gap(vector<POINT> & cords)
+{
+    int i;
+    for(i = 0 ; i < cords.size() -1; i++)
+        if(POINT::isTooFar(cords[i], cords[i+1]))
+                break;
+    if(i < cords.size() -1)
+        return i;
+    
+    return -1;
+}
 
 
 
@@ -233,7 +263,7 @@ void Utility:: writePDB(std::string fileName, std::vector<std::string> & data, i
 }
 
 
-std::string Utility:: removeSuff(std::string str)
+std::string Utility:: removeSuff(const std::string &str)
 {
     return str.substr(0, str.find_last_of("."));
 }

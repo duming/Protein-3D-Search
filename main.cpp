@@ -10,7 +10,7 @@
 //#include "Protein_search_engine.hpp"
 #include "Eigen/dense"
 #include <unordered_map>
-
+#include "Procruste.hpp"
 #include "benchMark.hpp"
 
 using namespace std;
@@ -330,8 +330,7 @@ int main(int argc, const char * argv[])
    
 
 //    GaussIntegral gi(1000,true);
-//    gi.test();
-    
+ //   gi.test();
 
 
 
@@ -491,24 +490,93 @@ int main(int argc, const char * argv[])
     benchMark bm;
     bm.setParas("data/casp11/native_domain/"                 // target
                 ,"data/casp11/prediction_domain/"            // prediction
-                ,"data/casp11/result_domain/"          // result
+                ,"data/casp11/results_LGA_sda/"          // result
                 ,"data/casp11/domain_definitions.txt"              // domain_definition
-                ,"data/casp11/output/"
+                ,"data/casp11/output_domain/"
             );
 
-   // bm.split_to_domain("data/casp11/domain_definitions.txt"
-   //                     ,"data/casp11/AllTargets/"
-   //                     ,"data/casp11/native_domain/" );
+    //bm.split_to_domain("data/casp11/domain_definitions.txt"
+    //                    ,"data/casp11/natives/"
+     //                   ,"data/casp11/native_domain/" );
 
-    bm.DescriptorTest();
+//    bm.DescriptorTest();
 
-    //vector<string> pdbdata;
-    //Utility::readPDB("data/casp11/natives/T0759.pdb",pdbdata);
+
+    //bm.readResult();
+    
+    //bm.calDist();
+    //bm.DataValidation();
+    //bm.saveResult("data/casp11/matlab_data/");
+    benchMark bm2;
+    bm2.setParas("data/casp11/native_equal_length/"                 // target
+                ,"data/casp11/prediction_equal_length/"            // prediction
+                ,"data/casp11/results_equal_length/"          // result
+                ,"data/casp11/domain_definitions.txt"              // domain_definition
+                ,"data/casp11/output_equal_length/"
+            );
+//    bm2.my_LGA_result();
+//    bm2.split_to_equal("data/casp11/native_domain/", "data/casp11/native_equal_length/", 20);
+//    bm2.prepare_directory("data/casp11/native_domain/", "data/casp11/prediction_equal_length/", 20);
+//  bm2.split_to_equal_diff("data/casp11/prediction/T0759/","data/casp11/prediction_equal_length/",20);
+//    bm2.split_all_prediction("data/casp11/prediction_domain/", "data/casp11/prediction_equal_length/",20);
+//    bm2.DescriptorTest();
+//    bm2.readResult();
+    
+//    bm2.calDist();
+//    bm2.DataValidation();
+//    bm2.saveResult("data/casp11/matlab_data/");
+
+
+   // vector<string> pdbdata;
+   // vector<vector<string> > segs;
+   // Utility::readPDB("data/casp11/prediction_domain/T0783-D2/T0783TS277_3-D2",pdbdata);
+   // Utility::splitPDB(pdbdata, segs, 20);
+    //cout<<Utility::firstRes(pdbdata)<<endl;
+    //cout<<Utility::lastRes(pdbdata)<<endl;
     //Utility::writePDB("data/casp11/output/T0759.pdb",pdbdata, 12,30);
+    
+    //for(int i=0; i < segs.size(); i++)
+    //{
+    //    for(int j = 0; j < segs[i].size(); j++)
+    //        cout<<segs[i][j]<<'\n';
+    //    cout<<'\n'<<endl;
+   // }
+    
+   // cout<<segs.size()<<endl;
+    
 
+    //Utility::readPDB("data/casp11/native_domain/T0783-D2.pdb",pdbdata, true);
+    //for(int i=0; i < pdbdata.size(); i++)
+   // {
+    //    cout<<i<<'\t'<<pdbdata[i]<<'\n';
+   // }
+   // cout<<endl;
+
+    /*
+    //procruste test
+    vector<pair<string,double> > result;
+    bm2.getRMSD("data/casp11/native_domain/T0759-D1.pdb"
+            , "data/casp11/prediction_domain/T0759-D1/"
+            , result);
+
+
+
+    cout<<"result\n"<<endl;
+    for(int i=0; i < result.size() ; i++)
+        cout<<result[i].first<<"\t"<<result[i].second<<'\n';
+    cout<<endl;
+    */
+
+    
+
+    vector<POINT> pdbdata;
+    string fileName = "data/casp11/native_equal_length/T0834-D1_1";
+    Cathdomain ::readPDB(fileName, pdbdata);
+    cout<<Utility::next_Gap(pdbdata)<<endl;
 
 
     return 0;
 }
+
 
 
